@@ -2,11 +2,13 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-
+import { signOut, useSession } from 'next-auth/react'
+import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
 export function MainNav() {
   const pathname = usePathname()
+  const { data: session } = useSession()
 
   return (
     <div className="mr-4 hidden md:flex">
@@ -52,6 +54,27 @@ export function MainNav() {
         >
           Blog
         </Link>
+        <div className="flex items-center space-x-4">
+          {session ? (
+            <>
+              <Button 
+                variant="ghost" 
+                onClick={() => signOut()}
+              >
+                Log Out
+              </Button>
+            </>
+          ) : (
+            <>
+              <Link href="/login">
+                <Button variant="ghost">Sign In</Button>
+              </Link>
+              <Link href="/register">
+                <Button>Get Started</Button>
+              </Link>
+            </>
+          )}
+        </div>
       </nav>
     </div>
   )

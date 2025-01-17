@@ -5,11 +5,12 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
+import Link from 'next/link'
 
 export default function RegisterPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
+  const [error, setError] = useState<string | React.ReactNode>("")
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -43,7 +44,20 @@ export default function RegisterPage() {
 
       if (!response.ok) {
         const errorData = await response.json()
-        throw new Error(errorData.error || "Error creating account")
+        if (errorData.error === "User already exists") {
+          setError(
+            <span>
+              Account already exists. {" "}
+              <Link href="/login" className="text-primary hover:underline">
+                Sign in instead
+              </Link>
+            </span>
+          )
+        } else {
+          throw new Error(errorData.error || "Error creating account")
+        }
+        setLoading(false)
+        return
       }
 
       router.push("/login")
