@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils'
 import { ThemeProvider } from '@/components/theme-provider'
 import { SiteHeader } from '@/components/site-header'
 import { TailwindIndicator } from '@/components/tailwind-indicator'
-import { SessionProvider } from "next-auth/react"
+import { Providers } from "@/components/providers"
 
 import './globals.css'
 
@@ -31,7 +31,7 @@ export default function RootLayout({
         'min-h-screen bg-background font-sans antialiased',
         inter.className
       )}>
-        <SessionProvider>
+        <Providers>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
@@ -44,7 +44,7 @@ export default function RootLayout({
             </div>
             <TailwindIndicator />
           </ThemeProvider>
-        </SessionProvider>
+        </Providers>
       </body>
     </html>
   )
