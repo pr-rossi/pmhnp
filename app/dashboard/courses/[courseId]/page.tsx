@@ -104,7 +104,7 @@ export default function CourseContentPage({ params }: { params: { courseId: stri
                         )}
                         <span>{lesson.title}</span>
                       </div>
-                      <Link href={`/dashboard/courses/${course.id}/lessons/${lesson.id}`}>
+                      <Link href={`/dashboard/courses/${params.courseId}/lessons/${lesson.id}`}>
                         <Button variant="outline" size="sm">
                           {lesson.completed ? 'Review' : 'Start'}
                         </Button>
