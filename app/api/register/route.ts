@@ -1,38 +1,44 @@
-import { NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
-import { hash } from 'bcrypt'
+import { hash } from "bcrypt"
+import { NextResponse } from "next/server"
+import { prisma } from "@/lib/prisma"
 
-const prisma = new PrismaClient()
-
-export async function POST(request: Request) {
+export async function POST(req: Request) {
   try {
-    const { name, email, password } = await request.json()
-
-    // Check if user already exists
+    const { email, password, name } = await req.json()
+    
+    // Check if user exists
     const existingUser = await prisma.user.findUnique({
-      where: { email },
+      where: { email }
     })
 
     if (existingUser) {
-      return NextResponse.json({ message: 'User already exists' }, { status: 400 })
+      return NextResponse.json(
+        { error: "User already exists" },
+        { status: 400 }
+      )
     }
 
-    // Hash the password
     const hashedPassword = await hash(password, 10)
-
-    // Create new user
+    
     const user = await prisma.user.create({
       data: {
-        name,
         email,
         password: hashedPassword,
+        name,
       },
     })
 
-    return NextResponse.json({ message: 'User created successfully' }, { status: 201 })
+    return NextResponse.json({
+      user: {
+        email: user.email,
+        name: user.name,
+      }
+    })
   } catch (error) {
-    console.error('Registration error:', error)
-    return NextResponse.json({ message: 'An error occurred during registration' }, { status: 500 })
+    return NextResponse.json(
+      { error: "Error creating user" },
+      { status: 500 }
+    )
   }
 }
 
