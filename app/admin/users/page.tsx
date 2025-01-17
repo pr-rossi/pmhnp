@@ -16,6 +16,7 @@ interface User {
   email: string
   name: string | null
   createdAt: string
+  role: string
 }
 
 export default function UsersPage() {
@@ -47,6 +48,7 @@ export default function UsersPage() {
           <TableRow>
             <TableHead>Name</TableHead>
             <TableHead>Email</TableHead>
+            <TableHead>Role</TableHead>
             <TableHead>Created</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
@@ -56,11 +58,13 @@ export default function UsersPage() {
             <TableRow key={user.id}>
               <TableCell>{user.name}</TableCell>
               <TableCell>{user.email}</TableCell>
+              <TableCell>{user.role}</TableCell>
               <TableCell>{new Date(user.createdAt).toLocaleDateString()}</TableCell>
               <TableCell>
                 <Button 
                   variant="destructive" 
                   onClick={() => deleteUser(user.id)}
+                  disabled={user.role === "ADMIN"}
                 >
                   Delete
                 </Button>
