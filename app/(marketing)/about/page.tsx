@@ -1,7 +1,6 @@
 // app/(marketing)/about/page.tsx
 
 import { NextPage } from 'next'
-import Link from 'next/link'
 import Image from 'next/image'
 import { GraduationCap, Users, Award, BookOpen } from 'lucide-react'
 
@@ -49,7 +48,7 @@ const AboutPage: NextPage = () => {
             <h2 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">About Us</h2>
             <p className="mt-6 text-lg leading-8 text-gray-600">
               Clarity Education Systems was founded with a clear mission: to provide the highest quality 
-              PMHNP test preparation and education. Under the leadership of Dr. John Rossi, we've helped 
+              PMHNP test preparation and education. Under the leadership of Dr. John Rossi, we&apos;ve helped 
               thousands of students achieve their dreams of becoming Psychiatric Mental Health Nurse Practitioners.
             </p>
           </div>
