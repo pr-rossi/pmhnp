@@ -1,9 +1,11 @@
 // app/(marketing)/about/page.tsx
 
+import { NextPage } from 'next'
+import Link from 'next/link'
 import Image from 'next/image'
 import { GraduationCap, Users, Award, BookOpen } from 'lucide-react'
 
-export default function AboutPage() {
+const AboutPage: NextPage = () => {
   const stats = [
     { id: 1, name: 'Students Helped', value: '1,000+' },
     { id: 2, name: 'Pass Rate', value: '95%' },
@@ -95,9 +97,11 @@ export default function AboutPage() {
               </div>
             </div>
             <div className="relative">
-              <img
-                src="/api/placeholder/800/600"
-                alt="Placeholder"
+              <Image 
+                src="/path-to-image.jpg"
+                alt="Description"
+                width={500}
+                height={300}
                 className="w-[48rem] max-w-none rounded-xl shadow-xl ring-1 ring-gray-400/10 sm:w-[57rem]"
               />
             </div>
@@ -134,3 +138,5 @@ export default function AboutPage() {
     </main>
   )
 }
+
+export default AboutPage
