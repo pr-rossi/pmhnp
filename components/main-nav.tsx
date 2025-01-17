@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils'
 export function MainNav() {
   const pathname = usePathname()
   const { data: session } = useSession()
+  const isOnDashboard = pathname?.startsWith('/dashboard')
 
   return (
     <div className="mr-4 hidden md:flex">
@@ -56,14 +57,18 @@ export function MainNav() {
         </Link>
         <div className="flex items-center space-x-4">
           {session ? (
-            <>
+            isOnDashboard ? (
               <Button 
                 variant="ghost" 
                 onClick={() => signOut()}
               >
                 Log Out
               </Button>
-            </>
+            ) : (
+              <Link href="/dashboard">
+                <Button variant="ghost">Go to Dashboard</Button>
+              </Link>
+            )
           ) : (
             <>
               <Link href="/login">
