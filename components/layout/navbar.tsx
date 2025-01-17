@@ -1,3 +1,5 @@
+"use client"
+
 // components/layout/navbar.tsx
 import Link from 'next/link'
 import { Menu, X } from 'lucide-react'
