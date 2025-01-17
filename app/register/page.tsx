@@ -17,12 +17,20 @@ export default function RegisterPage() {
     setError("")
 
     const formData = new FormData(event.currentTarget)
+    const password = formData.get("password") as string
+    const confirmPassword = formData.get("confirmPassword") as string
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match")
+      setLoading(false)
+      return
+    }
+
     const data = {
       email: formData.get("email"),
-      password: formData.get("password"),
+      password: password,
       name: formData.get("name"),
     }
-    console.log("Submitting:", data)
     
     try {
       const response = await fetch("/api/register", {
@@ -32,17 +40,14 @@ export default function RegisterPage() {
           "Content-Type": "application/json",
         },
       })
-      console.log("Response:", response)
 
       if (!response.ok) {
         const errorData = await response.json()
-        console.error("Error data:", errorData)
         throw new Error(errorData.error || "Error creating account")
       }
 
       router.push("/login")
     } catch (error: any) {
-      console.error("Caught error:", error)
       setError(error?.message || "Failed to create account")
     } finally {
       setLoading(false)
@@ -77,6 +82,14 @@ export default function RegisterPage() {
                 name="password"
                 type="password"
                 placeholder="Password"
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Input
+                name="confirmPassword"
+                type="password"
+                placeholder="Confirm Password"
                 required
               />
             </div>
