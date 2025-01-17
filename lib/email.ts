@@ -4,8 +4,8 @@ const resend = new Resend(process.env.RESEND_API_KEY)
 
 export async function sendWelcomeEmail(email: string, name: string) {
   try {
-    await resend.emails.send({
-      from: 'Clarity Education <noreply@yourdomain.com>',
+    const data = await resend.emails.send({
+      from: 'onboarding@resend.dev',
       to: email,
       subject: 'Welcome to Clarity Education',
       html: `
@@ -15,7 +15,10 @@ export async function sendWelcomeEmail(email: string, name: string) {
         <p>Best regards,<br>The Clarity Education Team</p>
       `
     })
+    console.log('Email sent:', data)
+    return data
   } catch (error) {
     console.error('Failed to send welcome email:', error)
+    throw error
   }
 } 
