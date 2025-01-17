@@ -42,8 +42,8 @@ export const authOptions: NextAuthOptions = {
   ],
   pages: {
     signIn: '/login',
-    newUser: '/register',
   },
+  secret: process.env.NEXTAUTH_SECRET,
   session: { strategy: "jwt" },
   callbacks: {
     async jwt({ token, user }) {
