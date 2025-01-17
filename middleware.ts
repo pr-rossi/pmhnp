@@ -20,7 +20,8 @@ export default withAuth(
       return null
     }
 
-    // Check admin access
+    // Check admin access - add console.log to debug
+    console.log('Token:', token)
     if (isAdminPage && token?.role !== "ADMIN") {
       return NextResponse.redirect(new URL('/', req.url))
     }
