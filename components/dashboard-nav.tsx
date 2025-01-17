@@ -8,6 +8,9 @@ import { cn } from "@/lib/utils"
 export function DashboardNav() {
   const pathname = usePathname()
   const { data: session } = useSession()
+  
+  console.log('Session in DashboardNav:', session)
+  
   const isAdmin = session?.user?.role === "ADMIN"
 
   return (

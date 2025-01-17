@@ -46,6 +46,9 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async jwt({ token, user, trigger, session }) {
+      console.log('JWT callback - user:', user)
+      console.log('JWT callback - token:', token)
+      
       if (trigger === "update") {
         // Get fresh user data
         const freshUser = await prisma.user.findUnique({
@@ -63,6 +66,8 @@ export const authOptions: NextAuthOptions = {
       return token
     },
     async session({ session, token }) {
+      console.log('Session callback - token:', token)
+      
       if (token && session.user) {
         session.user.role = token.role
         session.user.id = token.sub
