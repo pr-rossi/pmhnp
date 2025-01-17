@@ -10,6 +10,7 @@ export function MainNav() {
   const pathname = usePathname()
   const { data: session } = useSession()
   const isOnDashboard = pathname?.startsWith('/dashboard')
+  const isAdmin = session?.user?.role === "ADMIN"
 
   return (
     <div className="mr-4 hidden md:flex">
@@ -55,6 +56,17 @@ export function MainNav() {
         >
           Blog
         </Link>
+        {isAdmin && (
+          <Link
+            href="/admin/users"
+            className={cn(
+              "transition-colors hover:text-foreground/80",
+              pathname?.startsWith("/admin") ? "text-foreground" : "text-foreground/60"
+            )}
+          >
+            Admin
+          </Link>
+        )}
         <div className="flex items-center space-x-4">
           {session ? (
             isOnDashboard ? (
