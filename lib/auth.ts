@@ -45,15 +45,27 @@ export const authOptions: NextAuthOptions = {
     })
   ],
   callbacks: {
-    jwt: ({ token, user }) => {
+    async jwt({ token, user, trigger, session }) {
+      if (trigger === "update") {
+        // Get fresh user data
+        const freshUser = await prisma.user.findUnique({
+          where: { id: token.sub },
+          select: { role: true }
+        })
+        if (freshUser) {
+          token.role = freshUser.role
+        }
+      }
+      
       if (user) {
         token.role = user.role
       }
       return token
     },
-    session: ({ session, token }) => {
+    async session({ session, token }) {
       if (token && session.user) {
         session.user.role = token.role
+        session.user.id = token.sub
       }
       return session
     }
