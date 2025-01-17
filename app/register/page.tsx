@@ -17,27 +17,32 @@ export default function RegisterPage() {
     setError("")
 
     const formData = new FormData(event.currentTarget)
+    const data = {
+      email: formData.get("email"),
+      password: formData.get("password"),
+      name: formData.get("name"),
+    }
+    console.log("Submitting:", data)
     
     try {
       const response = await fetch("/api/register", {
         method: "POST",
-        body: JSON.stringify({
-          email: formData.get("email"),
-          password: formData.get("password"),
-          name: formData.get("name"),
-        }),
+        body: JSON.stringify(data),
         headers: {
           "Content-Type": "application/json",
         },
       })
+      console.log("Response:", response)
 
       if (!response.ok) {
-        const data = await response.json()
-        throw new Error(data.error || "Error creating account")
+        const errorData = await response.json()
+        console.error("Error data:", errorData)
+        throw new Error(errorData.error || "Error creating account")
       }
 
       router.push("/login")
     } catch (error: any) {
+      console.error("Caught error:", error)
       setError(error?.message || "Failed to create account")
     } finally {
       setLoading(false)
