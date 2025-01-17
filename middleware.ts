@@ -9,32 +9,27 @@ export default withAuth(
     const isAuthPage = req.nextUrl.pathname.startsWith('/login') || 
                       req.nextUrl.pathname.startsWith('/register')
     const isAdminPage = req.nextUrl.pathname.startsWith('/admin')
-    
-    if (isAuthPage) {
-      if (isAuth) {
-        return NextResponse.redirect(new URL('/dashboard', req.url))
-      }
+
+    // Redirect authenticated users away from auth pages
+    if (isAuthPage && isAuth) {
+      return NextResponse.redirect(new URL('/dashboard', req.url))
+    }
+
+    // Allow public pages and auth pages
+    if (!isAuth && !isAdminPage) {
       return null
     }
 
-    if (!isAuth) {
-      let from = req.nextUrl.pathname;
-      if (req.nextUrl.search) {
-        from += req.nextUrl.search;
-      }
-      
-      return NextResponse.redirect(
-        new URL(`/login?from=${encodeURIComponent(from)}`, req.url)
-      );
-    }
-
-    if (isAdminPage && token.role !== "ADMIN") {
+    // Check admin access
+    if (isAdminPage && token?.role !== "ADMIN") {
       return NextResponse.redirect(new URL('/', req.url))
     }
+
+    return null
   },
   {
     callbacks: {
-      authorized: ({ token }) => !!token
+      authorized: () => true // Let the middleware function handle auth
     },
   }
 )
