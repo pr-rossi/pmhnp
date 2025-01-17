@@ -1,21 +1,17 @@
 import { hash } from "bcrypt"
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { sendWelcomeEmail } from "@/lib/email"
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json()
-    console.log("Received registration request:", body)
-
-    const { email, password, name } = body
+    const { email, password, name } = await req.json()
     
-    // Check if user exists
     const existingUser = await prisma.user.findUnique({
       where: { email }
     })
 
     if (existingUser) {
-      console.log("User already exists:", email)
       return NextResponse.json(
         { error: "User already exists" },
         { status: 400 }
@@ -24,26 +20,23 @@ export async function POST(req: Request) {
 
     const hashedPassword = await hash(password, 10)
     
-    try {
-      const user = await prisma.user.create({
-        data: {
-          email,
-          password: hashedPassword,
-          name,
-        },
-      })
-      console.log("Created user:", user.email)
+    const user = await prisma.user.create({
+      data: {
+        email,
+        password: hashedPassword,
+        name,
+      },
+    })
 
-      return NextResponse.json({
-        user: {
-          email: user.email,
-          name: user.name,
-        }
-      })
-    } catch (dbError) {
-      console.error("Database error:", dbError)
-      throw dbError
-    }
+    // Send welcome email
+    await sendWelcomeEmail(email, name || 'there')
+
+    return NextResponse.json({
+      user: {
+        email: user.email,
+        name: user.name,
+      }
+    })
   } catch (error: any) {
     console.error("Registration error:", error)
     return NextResponse.json(
