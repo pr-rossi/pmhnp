@@ -1,0 +1,92 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRES_PRISMA_URL") // Uses connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING") // Uses a direct connection
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  password      String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  emailVerified DateTime?
+  image         String?
+  role          UserRole  @default(USER)
+  courseAccess  CourseAccess[]
+  progress      Progress[]
+}
+
+model CourseAccess {
+  id        String   @id @default(cuid())
+  userId    String
+  programId String
+  startDate DateTime @default(now())
+  endDate   DateTime
+  user      User     @relation(fields: [userId], references: [id])
+  program   Program  @relation(fields: [programId], references: [id])
+}
+
+model Program {
+  id          String        @id @default(cuid())
+  name        String
+  description String
+  duration    Int          // Duration in days
+  price       Float
+  features    String[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  userAccess  CourseAccess[]
+  modules     Module[]
+}
+
+model Module {
+  id          String    @id @default(cuid())
+  title       String
+  description String
+  order       Int
+  programId   String
+  program     Program   @relation(fields: [programId], references: [id])
+  content     Content[]
+  progress    Progress[]
+}
+
+model Content {
+  id          String    @id @default(cuid())
+  title       String
+  type        ContentType
+  moduleId    String
+  module      Module    @relation(fields: [moduleId], references: [id])
+  data        Json      // Stores content data based on type
+  order       Int
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Progress {
+  id        String   @id @default(cuid())
+  userId    String
+  moduleId  String
+  completed Boolean  @default(false)
+  progress  Float    @default(0)
+  lastAccessed DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  module    Module   @relation(fields: [moduleId], references: [id])
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
+enum ContentType {
+  VIDEO
+  QUIZ
+  READING
+  ASSIGNMENT
+} 
