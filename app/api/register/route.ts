@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma"
 export async function POST(req: Request) {
   try {
     const body = await req.json()
-    console.log("Received registration request:", body) // Debug log
+    console.log("Received registration request:", body)
 
     const { email, password, name } = body
     
@@ -15,7 +15,7 @@ export async function POST(req: Request) {
     })
 
     if (existingUser) {
-      console.log("User already exists:", email) // Debug log
+      console.log("User already exists:", email)
       return NextResponse.json(
         { error: "User already exists" },
         { status: 400 }
@@ -24,25 +24,30 @@ export async function POST(req: Request) {
 
     const hashedPassword = await hash(password, 10)
     
-    const user = await prisma.user.create({
-      data: {
-        email,
-        password: hashedPassword,
-        name,
-      },
-    })
-    console.log("Created user:", user.email) // Debug log
+    try {
+      const user = await prisma.user.create({
+        data: {
+          email,
+          password: hashedPassword,
+          name,
+        },
+      })
+      console.log("Created user:", user.email)
 
-    return NextResponse.json({
-      user: {
-        email: user.email,
-        name: user.name,
-      }
-    })
-  } catch (error) {
-    console.error("Registration error:", error) // Debug log
+      return NextResponse.json({
+        user: {
+          email: user.email,
+          name: user.name,
+        }
+      })
+    } catch (dbError) {
+      console.error("Database error:", dbError)
+      throw dbError
+    }
+  } catch (error: any) {
+    console.error("Registration error:", error)
     return NextResponse.json(
-      { error: "Error creating user" },
+      { error: error.message || "Error creating user" },
       { status: 500 }
     )
   }
