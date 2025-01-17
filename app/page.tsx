@@ -71,7 +71,7 @@ export default function HomePage() {
               Excel in Your PMHNP Journey
             </h1>
             <p className="mt-6 text-lg leading-8 text-gray-600">
-              Join Dr. John Rossi's comprehensive PMHNP preparation programs. 
+              Join Dr. John Rossi&apos;s comprehensive PMHNP preparation programs. 
               Get the support and resources you need to succeed in your certification journey.
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
