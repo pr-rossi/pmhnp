@@ -10,6 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { toast } from "sonner"
 
 interface User {
   id: string
@@ -40,6 +41,23 @@ export default function UsersPage() {
     }
   }
 
+  async function makeAdmin(id: string, email: string) {
+    if (!confirm(`Make ${email} an admin?`)) return
+
+    const res = await fetch(`/api/users/${id}/make-admin`, {
+      method: 'PATCH',
+    })
+
+    if (res.ok) {
+      setUsers(users.map(user => 
+        user.id === id ? { ...user, role: "ADMIN" } : user
+      ))
+      toast.success("User updated to admin")
+    } else {
+      toast.error("Failed to update user")
+    }
+  }
+
   return (
     <div className="container py-10">
       <h1 className="text-2xl font-bold mb-6">Users</h1>
@@ -60,7 +78,15 @@ export default function UsersPage() {
               <TableCell>{user.email}</TableCell>
               <TableCell>{user.role}</TableCell>
               <TableCell>{new Date(user.createdAt).toLocaleDateString()}</TableCell>
-              <TableCell>
+              <TableCell className="space-x-2">
+                {user.role !== "ADMIN" && (
+                  <Button 
+                    variant="outline"
+                    onClick={() => makeAdmin(user.id, user.email)}
+                  >
+                    Make Admin
+                  </Button>
+                )}
                 <Button 
                   variant="destructive" 
                   onClick={() => deleteUser(user.id)}
