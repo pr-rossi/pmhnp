@@ -44,98 +44,86 @@ export default function UsersPage() {
   const toggleAdmin = async (id: string, email: string, currentRole: string) => {
     const isAdmin = currentRole === "ADMIN"
     const action = isAdmin ? "remove admin from" : "make admin"
-    console.log('Starting toggleAdmin:', { id, email, currentRole, isAdmin })
 
-    return new Promise((resolve) => {
-      const toastId = toast(
-        <div className="flex flex-col gap-2">
-          <p>{`${action} ${email}?`}</p>
-          <div className="flex justify-end gap-2">
-            <Button 
-              size="sm" 
-              variant="outline" 
-              onClick={() => {
-                console.log('Cancel clicked')
-                toast.dismiss(toastId)
-                resolve(false)
-              }}
-            >
-              Cancel
-            </Button>
-            <Button 
-              size="sm" 
-              variant={isAdmin ? "destructive" : "default"} 
-              onClick={async () => {
-                console.log('Confirm clicked')
-                toast.dismiss(toastId)
+    toast.custom((t) => (
+      <div className="p-4 bg-background border rounded-lg">
+        <p className="mb-4">{`${action} ${email}?`}</p>
+        <div className="flex justify-end gap-2">
+          <Button 
+            size="sm" 
+            variant="outline" 
+            onClick={() => toast.dismiss(t)}
+          >
+            Cancel
+          </Button>
+          <Button 
+            size="sm" 
+            variant={isAdmin ? "destructive" : "default"} 
+            onClick={async () => {
+              toast.dismiss(t)
+              
+              try {
+                const res = await fetch(`/api/users/toggle-admin`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ userId: id, setAdmin: !isAdmin })
+                })
                 
-                try {
-                  const res = await fetch(`/api/users/toggle-admin`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ userId: id, setAdmin: !isAdmin })
-                  })
-                  
-                  console.log('API response:', res.status)
-                  if (!res.ok) throw new Error('API request failed')
-                  
-                  setUsers(users.map(user => 
-                    user.id === id ? { ...user, role: isAdmin ? "USER" : "ADMIN" } : user
-                  ))
-                  console.log('Users state updated')
-                  toast.success(`User ${isAdmin ? 'removed from' : 'updated to'} admin successfully`)
-                } catch (error) {
-                  console.error('Error in toggleAdmin:', error)
-                  toast.error('Failed to update user')
-                }
-                resolve(true)
-              }}
-            >
-              Confirm
-            </Button>
-          </div>
-        </div>,
-        { duration: Infinity }
-      )
-      console.log('Toast created with ID:', toastId)
-    })
+                if (!res.ok) throw new Error()
+                
+                setUsers(users.map(user => 
+                  user.id === id ? { ...user, role: isAdmin ? "USER" : "ADMIN" } : user
+                ))
+                toast.success(`User ${isAdmin ? 'removed from' : 'updated to'} admin successfully`)
+              } catch {
+                toast.error('Failed to update user')
+              }
+            }}
+          >
+            Confirm
+          </Button>
+        </div>
+      </div>
+    ), { duration: Infinity })
   }
 
   const deleteUser = async (id: string) => {
-    const promise = () => new Promise((resolve, reject) => {
-      toast(
-        <div className="flex flex-col gap-2">
-          <p>Are you sure you want to delete this user?</p>
-          <div className="flex justify-end gap-2">
-            <Button size="sm" variant="outline" onClick={() => reject()}>Cancel</Button>
-            <Button size="sm" variant="destructive" onClick={() => resolve(true)}>Delete</Button>
-          </div>
-        </div>,
-        { duration: Infinity }
-      )
-    })
-
-    try {
-      await promise()
-      toast.promise(
-        async () => {
-          const res = await fetch(`/api/users/${id}`, {
-            method: 'DELETE',
-          })
-          
-          if (!res.ok) throw new Error()
-          
-          setUsers(users.filter(user => user.id !== id))
-        },
-        {
-          loading: 'Deleting user...',
-          success: 'User deleted successfully',
-          error: 'Failed to delete user'
-        }
-      )
-    } catch {
-      // User cancelled
-    }
+    toast.custom((t) => (
+      <div className="p-4 bg-background border rounded-lg">
+        <p className="mb-4">Are you sure you want to delete this user?</p>
+        <div className="flex justify-end gap-2">
+          <Button 
+            size="sm" 
+            variant="outline" 
+            onClick={() => toast.dismiss(t)}
+          >
+            Cancel
+          </Button>
+          <Button 
+            size="sm" 
+            variant="destructive" 
+            onClick={async () => {
+              toast.dismiss(t)
+              
+              try {
+                const res = await fetch(`/api/users/${id}`, {
+                  method: 'DELETE',
+                })
+                
+                if (!res.ok) throw new Error()
+                
+                setUsers(users.filter(user => user.id !== id))
+                toast.success('User deleted successfully')
+              } catch {
+                toast.error('Failed to delete user')
+              }
+            }}
+          >
+            Delete
+          </Button>
+        </div>
+      </div>
+    ), { duration: Infinity })
   }
 
   if (loading) return <div>Loading...</div>
