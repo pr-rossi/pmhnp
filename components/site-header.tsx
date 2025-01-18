@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useSession } from "next-auth/react"
+import { usePathname } from "next/navigation"
 import { MainNav } from '@/components/main-nav'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { useEffect, useState } from 'react'
@@ -9,13 +10,15 @@ import { useEffect, useState } from 'react'
 export function SiteHeader() {
   const { data: session, status } = useSession()
   const [mounted, setMounted] = useState(false)
+  const pathname = usePathname()
   const isAuthenticated = status === "authenticated"
+  const isDashboard = pathname?.startsWith('/dashboard')
 
   useEffect(() => {
     setMounted(true)
   }, [])
 
-  if (!mounted) {
+  if (!mounted || isDashboard) {
     return null
   }
 
