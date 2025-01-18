@@ -6,12 +6,22 @@ import { MainNav } from '@/components/main-nav'
 import { ThemeToggle } from '@/components/theme-toggle'
 
 export function SiteHeader() {
-  const { data: session, status } = useSession()
+  const { data: session, status } = useSession({
+    required: true,
+    onUnauthenticated() {
+      console.log('SiteHeader - Unauthenticated')
+    },
+  })
   const isAuthenticated = status === "authenticated"
 
   console.log('SiteHeader - Session:', session)
   console.log('SiteHeader - Status:', status)
   console.log('SiteHeader - isAuthenticated:', isAuthenticated)
+
+  // Don't render until we have a definitive auth state
+  if (status === "loading") {
+    return null
+  }
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background">

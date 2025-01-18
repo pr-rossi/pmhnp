@@ -60,6 +60,8 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.role = user.role
         token.id = user.id
+        token.email = user.email
+        token.name = user.name
       }
 
       console.log('Auth - JWT Callback Output:', token)
@@ -68,13 +70,23 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       console.log('Auth - Session Callback Input:', { session, token })
       
-      if (session.user && token.sub) {
+      if (session.user) {
+        session.user.id = token.sub as string
         session.user.role = token.role as string
-        session.user.id = token.sub
+        session.user.email = token.email as string
+        session.user.name = token.name as string
       }
 
       console.log('Auth - Session Callback Output:', session)
       return session
+    }
+  },
+  events: {
+    async signIn({ user }) {
+      console.log('Auth - SignIn Event:', user)
+    },
+    async session({ session }) {
+      console.log('Auth - Session Event:', session)
     }
   }
 } 

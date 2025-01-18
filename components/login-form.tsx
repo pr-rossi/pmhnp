@@ -17,7 +17,6 @@ export function LoginForm() {
       const result = await signIn("credentials", {
         email,
         password,
-        callbackUrl: "/dashboard",
         redirect: false,
       })
 
@@ -29,7 +28,7 @@ export function LoginForm() {
       }
 
       console.log('LoginForm - Redirecting to dashboard')
-      window.location.href = "/dashboard"
+      window.location.replace("/dashboard")
     } catch (error) {
       console.error('LoginForm - Error:', error)
       toast.error("Something went wrong")
