@@ -42,38 +42,10 @@ export default function UsersPage() {
   }
 
   const makeAdmin = async (id: string, email: string) => {
+    if (!confirm(`Make ${email} an admin?`)) return;
+
     toast.promise(
-      new Promise((resolve, reject) => {
-        toast.custom((t) => (
-          <div className="p-4 bg-background border rounded-lg shadow-lg">
-            <p className="mb-4">Make {email} an admin?</p>
-            <div className="flex justify-end gap-2">
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => {
-                  toast.dismiss(t)
-                  reject()
-                }}
-              >
-                Cancel
-              </Button>
-              <Button 
-                variant="default" 
-                size="sm"
-                onClick={() => {
-                  toast.dismiss(t)
-                  resolve(true)
-                }}
-              >
-                Confirm
-              </Button>
-            </div>
-          </div>
-        ), {
-          duration: Infinity
-        })
-      }).then(async () => {
+      async () => {
         const res = await fetch(`/api/users/force-admin`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -85,8 +57,7 @@ export default function UsersPage() {
         setUsers(users.map(user => 
           user.id === id ? { ...user, role: "ADMIN" } : user
         ))
-        return 'User updated to admin successfully'
-      }),
+      },
       {
         loading: 'Updating user role...',
         success: 'User updated to admin successfully',
@@ -96,38 +67,10 @@ export default function UsersPage() {
   }
 
   const deleteUser = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this user?')) return;
+
     toast.promise(
-      new Promise((resolve, reject) => {
-        toast.custom((t) => (
-          <div className="p-4 bg-background border rounded-lg shadow-lg">
-            <p className="mb-4">Are you sure you want to delete this user?</p>
-            <div className="flex justify-end gap-2">
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => {
-                  toast.dismiss(t)
-                  reject()
-                }}
-              >
-                Cancel
-              </Button>
-              <Button 
-                variant="destructive" 
-                size="sm"
-                onClick={() => {
-                  toast.dismiss(t)
-                  resolve(true)
-                }}
-              >
-                Delete
-              </Button>
-            </div>
-          </div>
-        ), {
-          duration: Infinity
-        })
-      }).then(async () => {
+      async () => {
         const res = await fetch(`/api/users/${id}`, {
           method: 'DELETE',
         })
@@ -135,8 +78,7 @@ export default function UsersPage() {
         if (!res.ok) throw new Error()
         
         setUsers(users.filter(user => user.id !== id))
-        return 'User deleted successfully'
-      }),
+      },
       {
         loading: 'Deleting user...',
         success: 'User deleted successfully',
