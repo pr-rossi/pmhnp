@@ -11,19 +11,10 @@ interface MainNavProps {
 
 export function MainNav({ isAuthenticated }: MainNavProps) {
   const pathname = usePathname()
-  const isOnDashboard = pathname?.startsWith('/dashboard')
+  const isAuthPage = pathname === "/login" || pathname === "/register" || pathname?.startsWith('/dashboard')
 
-  // If on dashboard and authenticated, only show logo
-  if (isAuthenticated && isOnDashboard) {
-    return (
-      <div className="mr-4 hidden md:flex">
-        <Link href="/" className="mr-6 flex items-center space-x-2">
-          <span className="hidden font-bold sm:inline-block">
-            PMHNP Student Portal
-          </span>
-        </Link>
-      </div>
-    )
+  if (isAuthPage) {
+    return null
   }
 
   return (
