@@ -1,16 +1,10 @@
 "use client"
 
 import { signIn } from "next-auth/react"
-import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useState } from "react"
-
-interface LoginFormValues {
-  email: string
-  password: string
-}
 
 export function LoginForm() {
   const [email, setEmail] = useState("")
@@ -19,12 +13,20 @@ export function LoginForm() {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      await signIn("credentials", {
+      const result = await signIn("credentials", {
         email,
         password,
-        redirect: true,
-        callbackUrl: "/dashboard"
+        callbackUrl: "/dashboard",
+        redirect: false,
       })
+
+      if (result?.error) {
+        toast.error("Invalid credentials")
+        return
+      }
+
+      // Force a full page reload to /dashboard
+      window.location.href = "/dashboard"
     } catch (error) {
       toast.error("Something went wrong")
     }
