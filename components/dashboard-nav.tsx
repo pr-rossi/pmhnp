@@ -2,17 +2,12 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { useSession } from "next-auth/react"
+import { useAuth } from "@/hooks/use-auth"
 import { cn } from "@/lib/utils"
 
 export function DashboardNav() {
   const pathname = usePathname()
-  const { data: session } = useSession()
-  
-  console.log('Full session:', session)
-  console.log('User role:', session?.user?.role)
-  
-  const isAdmin = session?.user?.role === "ADMIN"
+  const { isAdmin } = useAuth()
 
   return (
     <nav className="grid items-start gap-2">
