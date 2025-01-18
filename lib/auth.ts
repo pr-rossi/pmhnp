@@ -46,22 +46,40 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async jwt({ token, user }) {
+      console.log('JWT Callback - Input:', { token, user })
+      
       if (user) {
         // On sign in
         token.role = user.role
-      } else {
+        token.email = user.email
+        token.name = user.name
+        token.id = user.id
+      } else if (token.email) {
         // On subsequent requests
         const dbUser = await prisma.user.findUnique({
-          where: { email: token.email as string },
-          select: { role: true }
+          where: { email: token.email },
+          select: { id: true, role: true, name: true, email: true }
         })
-        token.role = dbUser?.role
+        if (dbUser) {
+          token.role = dbUser.role
+          token.id = dbUser.id
+        }
       }
+
+      console.log('JWT Callback - Output token:', token)
       return token
     },
     async session({ session, token }) {
-      // Add role to session
-      session.user.role = token.role
+      console.log('Session Callback - Input:', { session, token })
+      
+      if (session.user) {
+        session.user.id = token.id
+        session.user.role = token.role
+        session.user.email = token.email
+        session.user.name = token.name
+      }
+
+      console.log('Session Callback - Output session:', session)
       return session
     }
   }
