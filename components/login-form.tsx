@@ -29,6 +29,7 @@ export function LoginForm() {
       // First check if user exists
       const checkUser = await fetch(`/api/users/check?email=${encodeURIComponent(email)}`)
       const { exists } = await checkUser.json()
+      console.log('User exists check:', { exists, email })
 
       if (!exists) {
         toast.error("There is not a user with that email. Try again")
