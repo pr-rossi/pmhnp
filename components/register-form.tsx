@@ -1,64 +1,38 @@
 "use client"
 
-import { signIn, useSession } from "next-auth/react"
+import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { useState, useEffect } from "react"
 
-export function LoginForm() {
+export function RegisterForm() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
-  const { data: session, status } = useSession()
 
-  useEffect(() => {
-    if (status === "authenticated") {
-      router.push("/dashboard")
-    }
-  }, [status, router])
-  
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
 
     try {
-      const result = await signIn("credentials", {
-        email,
-        password,
-        redirect: false,
+      const res = await fetch('/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
       })
 
-      if (result?.error) {
-        // Check if user exists first
-        const checkUser = await fetch(`/api/users/check?email=${encodeURIComponent(email)}`)
-        const { exists } = await checkUser.json()
+      if (!res.ok) throw new Error()
 
-        if (!exists) {
-          toast.error("There is not a user with that email. Try again")
-        } else if (result.error === "CredentialsSignin") {
-          toast.error("Invalid password")
-        } else {
-          toast.error("Something went wrong")
-        }
-        return
-      }
-
-      toast.success("Logged in successfully")
-      router.refresh()
-      router.push("/dashboard")
+      toast.success("Account created successfully")
+      router.push('/login')
     } catch (error) {
       toast.error("Something went wrong")
     } finally {
       setIsLoading(false)
     }
-  }
-
-  if (status === "loading" || status === "authenticated") {
-    return null
   }
 
   return (
@@ -79,16 +53,16 @@ export function LoginForm() {
           disabled={isLoading}
         />
         <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? "Logging in..." : "Sign In"}
+          {isLoading ? "Creating account..." : "Sign Up"}
         </Button>
       </form>
       <div className="text-center text-sm">
-        Don't have an account?{" "}
+        Have an account?{" "}
         <Link 
-          href="/register" 
+          href="/login" 
           className="font-semibold text-primary hover:underline"
         >
-          Sign up
+          Login
         </Link>
       </div>
     </div>
