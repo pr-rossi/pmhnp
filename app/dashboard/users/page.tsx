@@ -42,7 +42,30 @@ export default function UsersPage() {
   }
 
   const makeAdmin = async (id: string, email: string) => {
-    if (!confirm(`Make ${email} an admin?`)) return
+    const confirm = await new Promise<boolean>(resolve => {
+      toast.promise(
+        () => new Promise(r => setTimeout(() => r(true), 0)),
+        {
+          loading: 'Confirm action',
+          success: () => {
+            resolve(true)
+            return 'Confirmed'
+          },
+          error: 'Cancelled',
+          description: `Make ${email} an admin?`,
+          action: {
+            label: 'Confirm',
+            onClick: () => resolve(true)
+          },
+          cancel: {
+            label: 'Cancel',
+            onClick: () => resolve(false)
+          }
+        }
+      )
+    })
+
+    if (!confirm) return
 
     try {
       const res = await fetch(`/api/users/force-admin`, {
@@ -63,7 +86,30 @@ export default function UsersPage() {
   }
 
   const deleteUser = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this user?')) return
+    const confirm = await new Promise<boolean>(resolve => {
+      toast.promise(
+        () => new Promise(r => setTimeout(() => r(true), 0)),
+        {
+          loading: 'Confirm action',
+          success: () => {
+            resolve(true)
+            return 'Confirmed'
+          },
+          error: 'Cancelled',
+          description: 'Are you sure you want to delete this user?',
+          action: {
+            label: 'Delete',
+            onClick: () => resolve(true)
+          },
+          cancel: {
+            label: 'Cancel',
+            onClick: () => resolve(false)
+          }
+        }
+      )
+    })
+
+    if (!confirm) return
 
     try {
       const res = await fetch(`/api/users/${id}`, {
