@@ -1,6 +1,7 @@
 "use client"
 
 import { signIn } from "next-auth/react"
+import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -9,6 +10,7 @@ import { useState } from "react"
 export function LoginForm() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const router = useRouter()
   
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -24,8 +26,10 @@ export function LoginForm() {
         return
       }
 
-      // Force a clean reload to /dashboard
-      window.location.replace("/dashboard")
+      // Wait for session to be updated
+      await new Promise(resolve => setTimeout(resolve, 500))
+      router.push("/dashboard")
+      router.refresh()
     } catch (error) {
       toast.error("Something went wrong")
     }
