@@ -16,23 +16,40 @@ export function useAuth() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (status === "loading") return
+    let mounted = true
 
-    if (session?.user?.email) {
-      fetch('/api/users/me')
-        .then(res => res.json())
-        .then(data => {
+    async function fetchUser() {
+      try {
+        const res = await fetch('/api/users/me')
+        const data = await res.json()
+        if (mounted) {
           setUser(data)
           setLoading(false)
-        })
-    } else {
+        }
+      } catch (error) {
+        console.error('Error fetching user:', error)
+        if (mounted) {
+          setLoading(false)
+        }
+      }
+    }
+
+    if (status === "authenticated" && session?.user?.email) {
+      fetchUser()
+    } else if (status === "unauthenticated") {
+      setUser(null)
       setLoading(false)
     }
-  }, [session, status])
 
-  return { 
-    user, 
-    isAdmin: user?.role === "ADMIN",
-    loading 
+    return () => {
+      mounted = false
+    }
+  }, [session?.user?.email, status])
+
+  return {
+    user,
+    isAdmin: Boolean(user?.role === "ADMIN"),
+    loading,
+    isAuthenticated: status === "authenticated"
   }
 } 
