@@ -10,10 +10,10 @@ import { useState, useEffect } from "react"
 export function LoginForm() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
   const { data: session, status } = useSession()
 
-  // Redirect if already authenticated
   useEffect(() => {
     if (status === "authenticated") {
       router.push("/dashboard")
@@ -22,6 +22,8 @@ export function LoginForm() {
   
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setIsLoading(true)
+
     try {
       const result = await signIn("credentials", {
         email,
@@ -30,18 +32,21 @@ export function LoginForm() {
       })
 
       if (result?.error) {
-        toast.error("Invalid credentials")
+        if (result.error === "CredentialsSignin") {
+          toast.error("Invalid email or password")
+        } else {
+          toast.error("Something went wrong")
+        }
         return
       }
 
-      // Wait for session to be updated
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      // Force a session update and redirect
+      toast.success("Logged in successfully")
       router.refresh()
       router.push("/dashboard")
     } catch (error) {
       toast.error("Something went wrong")
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -56,15 +61,17 @@ export function LoginForm() {
         placeholder="Email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
+        disabled={isLoading}
       />
       <Input
         type="password"
         placeholder="Password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
+        disabled={isLoading}
       />
-      <Button type="submit" className="w-full">
-        Sign In
+      <Button type="submit" className="w-full" disabled={isLoading}>
+        {isLoading ? "Logging in..." : "Sign In"}
       </Button>
     </form>
   )
