@@ -4,12 +4,21 @@ import Link from 'next/link'
 import { useSession } from "next-auth/react"
 import { MainNav } from '@/components/main-nav'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { useEffect, useState } from 'react'
 
 export function SiteHeader() {
   const { data: session, status } = useSession()
+  const [mounted, setMounted] = useState(false)
   const isAuthenticated = status === "authenticated"
 
-  // Return consistent header during loading to prevent flicker
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) {
+    return null
+  }
+
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background">
       <div className="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0">

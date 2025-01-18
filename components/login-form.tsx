@@ -26,8 +26,8 @@ export function LoginForm() {
         return
       }
 
-      // Force a clean reload to ensure session is updated
-      window.location.href = "/dashboard"
+      // Use replace to prevent back navigation
+      window.location.replace("/dashboard")
     } catch (error) {
       toast.error("Something went wrong")
     }
