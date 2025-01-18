@@ -44,8 +44,10 @@ export default function UsersPage() {
   const toggleAdmin = async (id: string, email: string, currentRole: string) => {
     const isAdmin = currentRole === "ADMIN"
     const action = isAdmin ? "remove admin from" : "make admin"
+    console.log('Starting toggleAdmin:', { id, email, currentRole, isAdmin })
 
     const promise = () => new Promise((resolve, reject) => {
+      console.log('Creating confirmation toast')
       const toastId = toast(
         <div className="flex flex-col gap-2">
           <p>{`${action} ${email}?`}</p>
@@ -54,6 +56,7 @@ export default function UsersPage() {
               size="sm" 
               variant="outline" 
               onClick={() => {
+                console.log('Cancel clicked')
                 toast.dismiss(toastId)
                 reject()
               }}
@@ -64,6 +67,7 @@ export default function UsersPage() {
               size="sm" 
               variant={isAdmin ? "destructive" : "default"} 
               onClick={() => {
+                console.log('Confirm clicked')
                 toast.dismiss(toastId)
                 resolve(true)
               }}
@@ -74,26 +78,31 @@ export default function UsersPage() {
         </div>,
         { duration: Infinity }
       )
+      console.log('Toast created with ID:', toastId)
     })
 
     try {
+      console.log('Awaiting user confirmation')
       await promise()
+      console.log('User confirmed, making API request')
+      
       const res = await fetch(`/api/users/toggle-admin`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId: id, setAdmin: !isAdmin })
       })
       
-      if (!res.ok) throw new Error()
+      console.log('API response:', res.status)
+      if (!res.ok) throw new Error('API request failed')
       
       setUsers(users.map(user => 
         user.id === id ? { ...user, role: isAdmin ? "USER" : "ADMIN" } : user
       ))
+      console.log('Users state updated')
       toast.success(`User ${isAdmin ? 'removed from' : 'updated to'} admin successfully`)
     } catch (error) {
-      if (error instanceof Error) {
-        toast.error('Failed to update user')
-      }
+      console.error('Error in toggleAdmin:', error)
+      toast.error('Failed to update user')
     }
   }
 
