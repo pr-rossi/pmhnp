@@ -2,9 +2,8 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { signOut } from "next-auth/react"
-import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
 
 interface MainNavProps {
   isAuthenticated: boolean
@@ -14,7 +13,7 @@ export function MainNav({ isAuthenticated }: MainNavProps) {
   const pathname = usePathname()
   const isOnDashboard = pathname?.startsWith('/dashboard')
 
-  // If on dashboard and authenticated, only show logo and logout
+  // If on dashboard and authenticated, only show logo
   if (isAuthenticated && isOnDashboard) {
     return (
       <div className="mr-4 hidden md:flex">
@@ -23,16 +22,10 @@ export function MainNav({ isAuthenticated }: MainNavProps) {
             PMHNP Student Portal
           </span>
         </Link>
-        <nav className="flex items-center space-x-6 text-sm font-medium">
-          <Button variant="ghost" onClick={() => signOut()}>
-            Log Out
-          </Button>
-        </nav>
       </div>
     )
   }
 
-  // Regular navigation for all other cases
   return (
     <div className="mr-4 hidden md:flex">
       <Link href="/" className="mr-6 flex items-center space-x-2">
