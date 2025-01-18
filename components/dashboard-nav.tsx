@@ -6,7 +6,11 @@ import { signOut } from "next-auth/react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 
-export function DashboardNav() {
+interface DashboardNavProps {
+  isAdmin: boolean
+}
+
+export function DashboardNav({ isAdmin }: DashboardNavProps) {
   const pathname = usePathname()
 
   return (
@@ -35,6 +39,16 @@ export function DashboardNav() {
           Progress
         </span>
       </Link>
+      {isAdmin && (
+        <Link href="/dashboard/users">
+          <span className={cn(
+            "group flex items-center rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground",
+            pathname === "/dashboard/users" ? "bg-accent" : "transparent",
+          )}>
+            Users
+          </span>
+        </Link>
+      )}
       <Button 
         variant="ghost" 
         className="justify-start px-3"
