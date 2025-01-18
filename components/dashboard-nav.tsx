@@ -9,7 +9,8 @@ export function DashboardNav() {
   const pathname = usePathname()
   const { data: session } = useSession()
   
-  console.log('Session in DashboardNav:', session)
+  console.log('Full session:', session)
+  console.log('User role:', session?.user?.role)
   
   const isAdmin = session?.user?.role === "ADMIN"
 
