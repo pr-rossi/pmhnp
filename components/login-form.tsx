@@ -17,18 +17,9 @@ export function LoginForm() {
       const result = await signIn("credentials", {
         email,
         password,
-        redirect: false,
+        redirect: true,
+        callbackUrl: "/dashboard"
       })
-
-      console.log('LoginForm - Sign in result:', result)
-
-      if (result?.error) {
-        toast.error("Invalid credentials")
-        return
-      }
-
-      console.log('LoginForm - Redirecting to dashboard')
-      window.location.replace("/dashboard")
     } catch (error) {
       console.error('LoginForm - Error:', error)
       toast.error("Something went wrong")

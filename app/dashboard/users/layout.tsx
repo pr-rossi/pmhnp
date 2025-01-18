@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation"
 import { getServerSession } from "next-auth/next"
+import { prisma } from "@/lib/prisma"
 import { authOptions } from "@/lib/auth"
 
 export default async function UsersLayout({
@@ -9,8 +10,17 @@ export default async function UsersLayout({
 }) {
   const session = await getServerSession(authOptions)
 
-  if (!session || session.user.role !== "ADMIN") {
+  if (!session?.user?.email) {
     redirect("/")
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { email: session.user.email },
+    select: { role: true }
+  })
+
+  if (user?.role !== "ADMIN") {
+    redirect("/dashboard")
   }
 
   return <>{children}</>
