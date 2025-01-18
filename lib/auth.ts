@@ -54,37 +54,42 @@ export const authOptions: NextAuthOptions = {
     })
   ],
   callbacks: {
-    async jwt({ token, user, trigger }) {
+    async jwt({ token, user }) {
+      console.log('JWT Callback - Input:', { token, user })
+      
       if (user) {
-        token.id = user.id
+        // On sign in
         token.role = user.role
-      } else if (trigger === "update") {
+        token.email = user.email
+        token.name = user.name
+        token.id = user.id
+      } else if (token.email) {
+        // On subsequent requests
         const dbUser = await prisma.user.findUnique({
-          where: { email: token.email as string },
-          select: { id: true, role: true }
+          where: { email: token.email },
+          select: { id: true, role: true, name: true, email: true }
         })
         if (dbUser) {
-          token.id = dbUser.id
           token.role = dbUser.role
+          token.id = dbUser.id
         }
       }
+
+      console.log('JWT Callback - Output token:', token)
       return token
     },
     async session({ session, token }) {
+      console.log('Session Callback - Input:', { session, token })
+      
       if (session.user) {
-        session.user.id = token.id as string
-        session.user.role = token.role as string
+        session.user.id = token.id
+        session.user.role = token.role
+        session.user.email = token.email
+        session.user.name = token.name
       }
+
+      console.log('Session Callback - Output session:', session)
       return session
-    }
-  },
-  events: {
-    async signIn({ user }) {
-      // Force a session update on sign in
-      await prisma.user.update({
-        where: { id: user.id },
-        data: { lastLogin: new Date() }
-      })
     }
   }
 } 
