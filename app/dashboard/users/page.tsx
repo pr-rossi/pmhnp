@@ -42,47 +42,57 @@ export default function UsersPage() {
   }
 
   const makeAdmin = async (id: string, email: string) => {
-    const confirm = await new Promise<boolean>(resolve => {
-      toast.promise(
-        () => new Promise(r => setTimeout(() => r(true), 0)),
-        {
-          loading: 'Confirm action',
-          success: () => {
-            resolve(true)
-            return 'Confirmed'
-          },
-          error: 'Cancelled',
-          description: `Make ${email} an admin?`,
-          action: {
-            label: 'Confirm',
-            onClick: () => resolve(true)
-          },
-          cancel: {
-            label: 'Cancel',
-            onClick: () => resolve(false)
-          }
-        }
-      )
-    })
-
-    if (!confirm) return
-
-    try {
-      const res = await fetch(`/api/users/force-admin`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: id })
-      })
-      
-      if (!res.ok) throw new Error()
-      
-      setUsers(users.map(user => 
-        user.id === id ? { ...user, role: "ADMIN" } : user
-      ))
-      toast.success("User updated to admin")
-    } catch {
-      toast.error("Failed to update user")
-    }
+    toast.promise(
+      new Promise((resolve, reject) => {
+        toast.custom((t) => (
+          <div className="p-4 bg-background border rounded-lg shadow-lg">
+            <p className="mb-4">Make {email} an admin?</p>
+            <div className="flex justify-end gap-2">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => {
+                  toast.dismiss(t)
+                  reject()
+                }}
+              >
+                Cancel
+              </Button>
+              <Button 
+                variant="default" 
+                size="sm"
+                onClick={() => {
+                  toast.dismiss(t)
+                  resolve(true)
+                }}
+              >
+                Confirm
+              </Button>
+            </div>
+          </div>
+        ), {
+          duration: Infinity
+        })
+      }).then(async () => {
+        const res = await fetch(`/api/users/force-admin`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId: id })
+        })
+        
+        if (!res.ok) throw new Error()
+        
+        setUsers(users.map(user => 
+          user.id === id ? { ...user, role: "ADMIN" } : user
+        ))
+        return 'User updated to admin successfully'
+      }),
+      {
+        loading: 'Updating user role...',
+        success: 'User updated to admin successfully',
+        error: 'Failed to update user'
+      }
+    )
   }
 
   const deleteUser = async (id: string) => {
