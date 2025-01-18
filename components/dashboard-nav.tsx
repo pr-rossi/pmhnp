@@ -2,20 +2,14 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { useAuth } from "@/hooks/use-auth"
 import { cn } from "@/lib/utils"
 
-export function DashboardNav() {
+interface DashboardNavProps {
+  isAdmin: boolean
+}
+
+export function DashboardNav({ isAdmin }: DashboardNavProps) {
   const pathname = usePathname()
-  const { isAdmin, loading, isAuthenticated } = useAuth()
-
-  if (loading) {
-    return null // or a loading spinner
-  }
-
-  if (!isAuthenticated) {
-    return null
-  }
 
   return (
     <nav className="grid items-start gap-2">
