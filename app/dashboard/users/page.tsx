@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { toast } from "sonner"
+import { ConfirmationModal } from '@/components/confirmation-modal'
 import {
   Table,
   TableBody,
@@ -23,6 +24,15 @@ interface User {
 export default function UsersPage() {
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
+  const [modalState, setModalState] = useState<{
+    isOpen: boolean;
+    type: 'delete' | 'admin' | null;
+    user: User | null;
+  }>({
+    isOpen: false,
+    type: null,
+    user: null,
+  })
 
   useEffect(() => {
     fetchUsers()
@@ -41,151 +51,133 @@ export default function UsersPage() {
     }
   }
 
-  const toggleAdmin = async (id: string, email: string, currentRole: string) => {
-    const isAdmin = currentRole === "ADMIN"
-    
-    toast.custom((t) => (
-      <div className="flex flex-col gap-4 min-w-[300px]">
-        <div className="flex flex-col gap-2">
-          <h3 className="font-medium">
-            {isAdmin ? "Remove admin access?" : "Grant admin access?"}
-          </h3>
-          <p className="text-sm text-muted-foreground">
-            {isAdmin 
-              ? `Remove admin privileges from ${email}?`
-              : `Make ${email} an admin?`
-            }
-          </p>
-        </div>
-        <div className="flex gap-2 justify-end">
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => toast.dismiss(t)}
-          >
-            Cancel
-          </Button>
-          <Button
-            size="sm"
-            variant={isAdmin ? "destructive" : "default"}
-            onClick={async () => {
-              toast.dismiss(t)
-              try {
-                const res = await fetch(`/api/users/toggle-admin`, {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ userId: id, setAdmin: !isAdmin })
-                })
-                
-                if (!res.ok) throw new Error()
-                
-                setUsers(users.map(user => 
-                  user.id === id ? { ...user, role: isAdmin ? "USER" : "ADMIN" } : user
-                ))
-                toast.success(isAdmin ? "Admin access removed" : "Admin access granted")
-              } catch {
-                toast.error("Failed to update user role")
-              }
-            }}
-          >
-            {isAdmin ? "Remove Admin" : "Make Admin"}
-          </Button>
-        </div>
-      </div>
-    ), { duration: Infinity })
+  const handleToggleAdmin = async (user: User) => {
+    const isAdmin = user.role === "ADMIN"
+    try {
+      const res = await fetch(`/api/users/toggle-admin`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: user.id, setAdmin: !isAdmin })
+      })
+      
+      if (!res.ok) throw new Error()
+      
+      setUsers(users.map(u => 
+        u.id === user.id ? { ...u, role: isAdmin ? "USER" : "ADMIN" } : u
+      ))
+      toast.success(isAdmin ? "Admin access removed" : "Admin access granted")
+    } catch {
+      toast.error("Failed to update user role")
+    }
+    setModalState({ isOpen: false, type: null, user: null })
   }
 
-  const deleteUser = async (id: string) => {
-    toast.custom((t) => (
-      <div className="flex flex-col gap-4 min-w-[300px]">
-        <div className="flex flex-col gap-2">
-          <h3 className="font-medium">Delete user?</h3>
-          <p className="text-sm text-muted-foreground">
-            This action cannot be undone.
-          </p>
-        </div>
-        <div className="flex gap-2 justify-end">
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => toast.dismiss(t)}
-          >
-            Cancel
-          </Button>
-          <Button
-            size="sm"
-            variant="destructive"
-            onClick={async () => {
-              toast.dismiss(t)
-              try {
-                const res = await fetch(`/api/users/${id}`, {
-                  method: 'DELETE',
-                })
-                
-                if (!res.ok) throw new Error()
-                
-                setUsers(users.filter(user => user.id !== id))
-                toast.success("User deleted successfully")
-              } catch {
-                toast.error("Failed to delete user")
-              }
-            }}
-          >
-            Delete
-          </Button>
-        </div>
-      </div>
-    ), { duration: Infinity })
+  const handleDeleteUser = async (user: User) => {
+    try {
+      const res = await fetch(`/api/users/${user.id}`, {
+        method: 'DELETE',
+      })
+      
+      if (!res.ok) throw new Error()
+      
+      setUsers(users.filter(u => u.id !== user.id))
+      toast.success("User deleted successfully")
+    } catch {
+      toast.error("Failed to delete user")
+    }
+    setModalState({ isOpen: false, type: null, user: null })
   }
 
   if (loading) return <div>Loading...</div>
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h3 className="text-lg font-medium">Users</h3>
-        <p className="text-sm text-muted-foreground">
-          Manage user roles and access
-        </p>
-      </div>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>Email</TableHead>
-            <TableHead>Role</TableHead>
-            <TableHead>Created</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {users.map(user => (
-            <TableRow key={user.id}>
-              <TableCell>{user.name}</TableCell>
-              <TableCell>{user.email}</TableCell>
-              <TableCell>{user.role}</TableCell>
-              <TableCell>{new Date(user.createdAt).toLocaleDateString()}</TableCell>
-              <TableCell className="space-x-2">
-                <Button 
-                  variant={user.role === "ADMIN" ? "destructive" : "outline"}
-                  size="sm"
-                  onClick={() => toggleAdmin(user.id, user.email, user.role)}
-                >
-                  {user.role === "ADMIN" ? "Remove Admin" : "Make Admin"}
-                </Button>
-                <Button 
-                  variant="destructive"
-                  size="sm"
-                  onClick={() => deleteUser(user.id)}
-                  disabled={user.role === "ADMIN"}
-                >
-                  Delete
-                </Button>
-              </TableCell>
+    <>
+      <div className="space-y-6">
+        <div>
+          <h3 className="text-lg font-medium">Users</h3>
+          <p className="text-sm text-muted-foreground">
+            Manage user roles and access
+          </p>
+        </div>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Name</TableHead>
+              <TableHead>Email</TableHead>
+              <TableHead>Role</TableHead>
+              <TableHead>Created</TableHead>
+              <TableHead>Actions</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+          </TableHeader>
+          <TableBody>
+            {users.map(user => (
+              <TableRow key={user.id}>
+                <TableCell>{user.name}</TableCell>
+                <TableCell>{user.email}</TableCell>
+                <TableCell>{user.role}</TableCell>
+                <TableCell>{new Date(user.createdAt).toLocaleDateString()}</TableCell>
+                <TableCell className="space-x-2">
+                  <Button 
+                    variant={user.role === "ADMIN" ? "destructive" : "outline"}
+                    size="sm"
+                    onClick={() => setModalState({ 
+                      isOpen: true, 
+                      type: 'admin', 
+                      user 
+                    })}
+                  >
+                    {user.role === "ADMIN" ? "Remove Admin" : "Make Admin"}
+                  </Button>
+                  <Button 
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => setModalState({ 
+                      isOpen: true, 
+                      type: 'delete', 
+                      user 
+                    })}
+                    disabled={user.role === "ADMIN"}
+                  >
+                    Delete
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+
+      <ConfirmationModal
+        isOpen={modalState.isOpen}
+        onClose={() => setModalState({ isOpen: false, type: null, user: null })}
+        onConfirm={() => {
+          if (!modalState.user) return
+          if (modalState.type === 'admin') {
+            handleToggleAdmin(modalState.user)
+          } else if (modalState.type === 'delete') {
+            handleDeleteUser(modalState.user)
+          }
+        }}
+        title={modalState.type === 'admin' 
+          ? modalState.user?.role === "ADMIN" 
+            ? "Remove admin access?" 
+            : "Grant admin access?"
+          : "Delete user?"
+        }
+        description={modalState.type === 'admin'
+          ? modalState.user?.role === "ADMIN"
+            ? `Remove admin privileges from ${modalState.user?.email}?`
+            : `Make ${modalState.user?.email} an admin?`
+          : "This action cannot be undone."
+        }
+        confirmText={modalState.type === 'admin'
+          ? modalState.user?.role === "ADMIN" 
+            ? "Remove Admin" 
+            : "Make Admin"
+          : "Delete"
+        }
+        confirmVariant={modalState.type === 'delete' || modalState.user?.role === "ADMIN" ? "destructive" : "default"}
+      />
+    </>
   )
 } 
