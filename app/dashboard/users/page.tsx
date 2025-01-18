@@ -86,43 +86,53 @@ export default function UsersPage() {
   }
 
   const deleteUser = async (id: string) => {
-    const confirm = await new Promise<boolean>(resolve => {
-      toast.promise(
-        () => new Promise(r => setTimeout(() => r(true), 0)),
-        {
-          loading: 'Confirm action',
-          success: () => {
-            resolve(true)
-            return 'Confirmed'
-          },
-          error: 'Cancelled',
-          description: 'Are you sure you want to delete this user?',
-          action: {
-            label: 'Delete',
-            onClick: () => resolve(true)
-          },
-          cancel: {
-            label: 'Cancel',
-            onClick: () => resolve(false)
-          }
-        }
-      )
-    })
-
-    if (!confirm) return
-
-    try {
-      const res = await fetch(`/api/users/${id}`, {
-        method: 'DELETE',
-      })
-      
-      if (!res.ok) throw new Error()
-      
-      setUsers(users.filter(user => user.id !== id))
-      toast.success("User deleted")
-    } catch {
-      toast.error("Failed to delete user")
-    }
+    toast.promise(
+      new Promise((resolve, reject) => {
+        toast.custom((t) => (
+          <div className="p-4 bg-background border rounded-lg shadow-lg">
+            <p className="mb-4">Are you sure you want to delete this user?</p>
+            <div className="flex justify-end gap-2">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => {
+                  toast.dismiss(t)
+                  reject()
+                }}
+              >
+                Cancel
+              </Button>
+              <Button 
+                variant="destructive" 
+                size="sm"
+                onClick={() => {
+                  toast.dismiss(t)
+                  resolve(true)
+                }}
+              >
+                Delete
+              </Button>
+            </div>
+          </div>
+        ), {
+          duration: Infinity
+        })
+      }).then(async () => {
+        const res = await fetch(`/api/users/${id}`, {
+          method: 'DELETE',
+        })
+        
+        if (!res.ok) throw new Error()
+        
+        setUsers(users.filter(user => user.id !== id))
+        return 'User deleted successfully'
+      }),
+      {
+        loading: 'Deleting user...',
+        success: 'User deleted successfully',
+        error: 'Failed to delete user'
+      }
+    )
   }
 
   if (loading) return <div>Loading...</div>
