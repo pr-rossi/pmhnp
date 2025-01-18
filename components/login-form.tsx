@@ -26,6 +26,17 @@ export function LoginForm() {
     setIsLoading(true)
 
     try {
+      // First check if user exists
+      const checkUser = await fetch(`/api/users/check?email=${encodeURIComponent(email)}`)
+      const { exists } = await checkUser.json()
+
+      if (!exists) {
+        toast.error("There is not a user with that email. Try again")
+        setIsLoading(false)
+        return
+      }
+
+      // Proceed with login attempt
       const result = await signIn("credentials", {
         email,
         password,
@@ -33,13 +44,7 @@ export function LoginForm() {
       })
 
       if (result?.error) {
-        // Check if user exists first
-        const checkUser = await fetch(`/api/users/check?email=${encodeURIComponent(email)}`)
-        const { exists } = await checkUser.json()
-
-        if (!exists) {
-          toast.error("There is not a user with that email. Try again")
-        } else if (result.error === "CredentialsSignin") {
+        if (result.error === "CredentialsSignin") {
           toast.error("Invalid password")
         } else {
           toast.error("Something went wrong")
