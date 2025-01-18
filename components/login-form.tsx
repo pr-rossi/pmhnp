@@ -13,6 +13,7 @@ export function LoginForm() {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
+      console.log('LoginForm - Starting sign in')
       const result = await signIn("credentials", {
         email,
         password,
@@ -20,14 +21,17 @@ export function LoginForm() {
         redirect: false,
       })
 
+      console.log('LoginForm - Sign in result:', result)
+
       if (result?.error) {
         toast.error("Invalid credentials")
         return
       }
 
-      // Force a full page reload to /dashboard
+      console.log('LoginForm - Redirecting to dashboard')
       window.location.href = "/dashboard"
     } catch (error) {
+      console.error('LoginForm - Error:', error)
       toast.error("Something went wrong")
     }
   }

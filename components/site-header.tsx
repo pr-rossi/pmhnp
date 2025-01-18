@@ -9,6 +9,10 @@ export function SiteHeader() {
   const { data: session, status } = useSession()
   const isAuthenticated = status === "authenticated"
 
+  console.log('SiteHeader - Session:', session)
+  console.log('SiteHeader - Status:', status)
+  console.log('SiteHeader - isAuthenticated:', isAuthenticated)
+
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background">
       <div className="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0">
