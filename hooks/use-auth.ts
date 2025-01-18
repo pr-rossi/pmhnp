@@ -11,16 +11,28 @@ interface User {
 }
 
 export function useAuth() {
-  const { data: session } = useSession()
+  const { data: session, status } = useSession()
   const [user, setUser] = useState<User | null>(null)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    if (status === "loading") return
+
     if (session?.user?.email) {
       fetch('/api/users/me')
         .then(res => res.json())
-        .then(data => setUser(data))
+        .then(data => {
+          setUser(data)
+          setLoading(false)
+        })
+    } else {
+      setLoading(false)
     }
-  }, [session])
+  }, [session, status])
 
-  return { user, isAdmin: user?.role === "ADMIN" }
+  return { 
+    user, 
+    isAdmin: user?.role === "ADMIN",
+    loading 
+  }
 } 

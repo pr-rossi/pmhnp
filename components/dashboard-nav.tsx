@@ -20,6 +20,24 @@ export function DashboardNav() {
       >
         Overview
       </Link>
+      <Link
+        href="/dashboard/profile"
+        className={cn(
+          "group flex items-center rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground",
+          pathname === "/dashboard/profile" ? "bg-accent" : "transparent"
+        )}
+      >
+        Profile
+      </Link>
+      <Link
+        href="/dashboard/progress"
+        className={cn(
+          "group flex items-center rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground",
+          pathname === "/dashboard/progress" ? "bg-accent" : "transparent"
+        )}
+      >
+        Progress
+      </Link>
       {isAdmin && (
         <Link
           href="/dashboard/users"
