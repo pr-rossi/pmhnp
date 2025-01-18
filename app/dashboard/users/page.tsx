@@ -46,8 +46,7 @@ export default function UsersPage() {
     const action = isAdmin ? "remove admin from" : "make admin"
     console.log('Starting toggleAdmin:', { id, email, currentRole, isAdmin })
 
-    const promise = () => new Promise((resolve, reject) => {
-      console.log('Creating confirmation toast')
+    return new Promise((resolve) => {
       const toastId = toast(
         <div className="flex flex-col gap-2">
           <p>{`${action} ${email}?`}</p>
@@ -58,7 +57,7 @@ export default function UsersPage() {
               onClick={() => {
                 console.log('Cancel clicked')
                 toast.dismiss(toastId)
-                reject()
+                resolve(false)
               }}
             >
               Cancel
@@ -66,9 +65,29 @@ export default function UsersPage() {
             <Button 
               size="sm" 
               variant={isAdmin ? "destructive" : "default"} 
-              onClick={() => {
+              onClick={async () => {
                 console.log('Confirm clicked')
                 toast.dismiss(toastId)
+                
+                try {
+                  const res = await fetch(`/api/users/toggle-admin`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId: id, setAdmin: !isAdmin })
+                  })
+                  
+                  console.log('API response:', res.status)
+                  if (!res.ok) throw new Error('API request failed')
+                  
+                  setUsers(users.map(user => 
+                    user.id === id ? { ...user, role: isAdmin ? "USER" : "ADMIN" } : user
+                  ))
+                  console.log('Users state updated')
+                  toast.success(`User ${isAdmin ? 'removed from' : 'updated to'} admin successfully`)
+                } catch (error) {
+                  console.error('Error in toggleAdmin:', error)
+                  toast.error('Failed to update user')
+                }
                 resolve(true)
               }}
             >
@@ -80,30 +99,6 @@ export default function UsersPage() {
       )
       console.log('Toast created with ID:', toastId)
     })
-
-    try {
-      console.log('Awaiting user confirmation')
-      await promise()
-      console.log('User confirmed, making API request')
-      
-      const res = await fetch(`/api/users/toggle-admin`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: id, setAdmin: !isAdmin })
-      })
-      
-      console.log('API response:', res.status)
-      if (!res.ok) throw new Error('API request failed')
-      
-      setUsers(users.map(user => 
-        user.id === id ? { ...user, role: isAdmin ? "USER" : "ADMIN" } : user
-      ))
-      console.log('Users state updated')
-      toast.success(`User ${isAdmin ? 'removed from' : 'updated to'} admin successfully`)
-    } catch (error) {
-      console.error('Error in toggleAdmin:', error)
-      toast.error('Failed to update user')
-    }
   }
 
   const deleteUser = async (id: string) => {
