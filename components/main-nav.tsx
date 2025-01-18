@@ -14,6 +14,25 @@ export function MainNav({ isAuthenticated }: MainNavProps) {
   const pathname = usePathname()
   const isOnDashboard = pathname?.startsWith('/dashboard')
 
+  // If on dashboard and authenticated, only show logo and logout
+  if (isAuthenticated && isOnDashboard) {
+    return (
+      <div className="mr-4 hidden md:flex">
+        <Link href="/" className="mr-6 flex items-center space-x-2">
+          <span className="hidden font-bold sm:inline-block">
+            PMHNP Student Portal
+          </span>
+        </Link>
+        <nav className="flex items-center space-x-6 text-sm font-medium">
+          <Button variant="ghost" onClick={() => signOut()}>
+            Log Out
+          </Button>
+        </nav>
+      </div>
+    )
+  }
+
+  // Regular navigation for all other cases
   return (
     <div className="mr-4 hidden md:flex">
       <Link href="/" className="mr-6 flex items-center space-x-2">
@@ -69,16 +88,9 @@ export function MainNav({ isAuthenticated }: MainNavProps) {
               </Link>
             </>
           ) : (
-            <>
-              {!isOnDashboard && (
-                <Link href="/dashboard">
-                  <Button variant="ghost">Dashboard</Button>
-                </Link>
-              )}
-              <Button variant="ghost" onClick={() => signOut()}>
-                Log Out
-              </Button>
-            </>
+            <Link href="/dashboard">
+              <Button variant="ghost">Go to Dashboard</Button>
+            </Link>
           )}
         </div>
       </nav>
