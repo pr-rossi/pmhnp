@@ -26,10 +26,8 @@ export function LoginForm() {
         return
       }
 
-      // Wait for session to be updated
-      await new Promise(resolve => setTimeout(resolve, 500))
-      router.push("/dashboard")
-      router.refresh()
+      // Force a clean reload to ensure session is updated
+      window.location.href = "/dashboard"
     } catch (error) {
       toast.error("Something went wrong")
     }

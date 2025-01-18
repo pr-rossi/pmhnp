@@ -79,7 +79,9 @@ export const authOptions: NextAuthOptions = {
         where: { email: user.email as string },
         select: { role: true }
       })
-      user.role = dbUser?.role
+      if (dbUser) {
+        user.role = dbUser.role
+      }
     },
     async session({ session }) {
       console.log('Auth - Session Event:', session)
