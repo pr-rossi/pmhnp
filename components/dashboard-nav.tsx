@@ -15,7 +15,7 @@ export function DashboardNav({ isAdmin }: DashboardNavProps) {
 
   return (
     <nav className="grid items-start gap-2">
-      <Link href="/" className="flex items-center space-x-2 mb-4">
+      <Link href="/dashboard" className="flex items-center space-x-2 mb-4">
         <span className="font-bold">PMHNP Student Portal</span>
       </Link>
       <Link href="/dashboard">
