@@ -9,21 +9,6 @@ export function SiteHeader() {
   const { data: session, status } = useSession()
   const isAuthenticated = status === "authenticated"
 
-  console.log('SiteHeader - Session:', session)
-  console.log('SiteHeader - Status:', status)
-  console.log('SiteHeader - isAuthenticated:', isAuthenticated)
-
-  // Show loading state instead of nothing
-  if (status === "loading") {
-    return (
-      <header className="sticky top-0 z-40 w-full border-b bg-background">
-        <div className="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0">
-          <div className="animate-pulse">Loading...</div>
-        </div>
-      </header>
-    )
-  }
-
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background">
       <div className="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0">

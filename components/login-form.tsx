@@ -13,15 +13,20 @@ export function LoginForm() {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      console.log('LoginForm - Starting sign in')
       const result = await signIn("credentials", {
         email,
         password,
-        redirect: true,
-        callbackUrl: "/dashboard"
+        redirect: false,
       })
+
+      if (result?.error) {
+        toast.error("Invalid credentials")
+        return
+      }
+
+      // Force a clean reload to /dashboard
+      window.location.replace("/dashboard")
     } catch (error) {
-      console.error('LoginForm - Error:', error)
       toast.error("Something went wrong")
     }
   }
