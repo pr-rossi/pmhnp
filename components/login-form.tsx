@@ -32,12 +32,15 @@ export function LoginForm() {
       console.log('User exists check:', { exists, email })
 
       if (!exists) {
-        toast.error("There is not a user with that email. Try again")
         setIsLoading(false)
+        toast.error("There is not a user with that email. Try again", {
+          duration: 5000,
+          position: 'top-center',
+        })
         return
       }
 
-      // Proceed with login attempt
+      // Only attempt sign in if user exists
       const result = await signIn("credentials", {
         email,
         password,
@@ -45,11 +48,11 @@ export function LoginForm() {
       })
 
       if (result?.error) {
-        if (result.error === "CredentialsSignin") {
-          toast.error("Invalid password")
-        } else {
-          toast.error("Something went wrong")
-        }
+        setIsLoading(false)
+        toast.error("Invalid password", {
+          duration: 5000,
+          position: 'top-center',
+        })
         return
       }
 
@@ -57,9 +60,12 @@ export function LoginForm() {
       router.refresh()
       router.push("/dashboard")
     } catch (error) {
-      toast.error("Something went wrong")
-    } finally {
+      console.error('Login error:', error)
       setIsLoading(false)
+      toast.error("Something went wrong", {
+        duration: 5000,
+        position: 'top-center',
+      })
     }
   }
 
