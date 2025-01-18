@@ -43,43 +43,99 @@ export default function UsersPage() {
 
   const toggleAdmin = async (id: string, email: string, currentRole: string) => {
     const isAdmin = currentRole === "ADMIN"
-    const action = isAdmin ? "remove admin from" : "make admin"
-
-    if (!confirm(`${action} ${email}?`)) return
-
-    try {
-      const res = await fetch(`/api/users/toggle-admin`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: id, setAdmin: !isAdmin })
-      })
-      
-      if (!res.ok) throw new Error()
-      
-      setUsers(users.map(user => 
-        user.id === id ? { ...user, role: isAdmin ? "USER" : "ADMIN" } : user
-      ))
-      toast.success(`User ${isAdmin ? 'removed from' : 'updated to'} admin successfully`)
-    } catch {
-      toast.error('Failed to update user')
-    }
+    
+    toast.custom((t) => (
+      <div className="flex flex-col gap-4 min-w-[300px]">
+        <div className="flex flex-col gap-2">
+          <h3 className="font-medium">
+            {isAdmin ? "Remove admin access?" : "Grant admin access?"}
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            {isAdmin 
+              ? `Remove admin privileges from ${email}?`
+              : `Make ${email} an admin?`
+            }
+          </p>
+        </div>
+        <div className="flex gap-2 justify-end">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => toast.dismiss(t)}
+          >
+            Cancel
+          </Button>
+          <Button
+            size="sm"
+            variant={isAdmin ? "destructive" : "default"}
+            onClick={async () => {
+              toast.dismiss(t)
+              try {
+                const res = await fetch(`/api/users/toggle-admin`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ userId: id, setAdmin: !isAdmin })
+                })
+                
+                if (!res.ok) throw new Error()
+                
+                setUsers(users.map(user => 
+                  user.id === id ? { ...user, role: isAdmin ? "USER" : "ADMIN" } : user
+                ))
+                toast.success(isAdmin ? "Admin access removed" : "Admin access granted")
+              } catch {
+                toast.error("Failed to update user role")
+              }
+            }}
+          >
+            {isAdmin ? "Remove Admin" : "Make Admin"}
+          </Button>
+        </div>
+      </div>
+    ), { duration: Infinity })
   }
 
   const deleteUser = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this user?')) return
-
-    try {
-      const res = await fetch(`/api/users/${id}`, {
-        method: 'DELETE',
-      })
-      
-      if (!res.ok) throw new Error()
-      
-      setUsers(users.filter(user => user.id !== id))
-      toast.success('User deleted successfully')
-    } catch {
-      toast.error('Failed to delete user')
-    }
+    toast.custom((t) => (
+      <div className="flex flex-col gap-4 min-w-[300px]">
+        <div className="flex flex-col gap-2">
+          <h3 className="font-medium">Delete user?</h3>
+          <p className="text-sm text-muted-foreground">
+            This action cannot be undone.
+          </p>
+        </div>
+        <div className="flex gap-2 justify-end">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => toast.dismiss(t)}
+          >
+            Cancel
+          </Button>
+          <Button
+            size="sm"
+            variant="destructive"
+            onClick={async () => {
+              toast.dismiss(t)
+              try {
+                const res = await fetch(`/api/users/${id}`, {
+                  method: 'DELETE',
+                })
+                
+                if (!res.ok) throw new Error()
+                
+                setUsers(users.filter(user => user.id !== id))
+                toast.success("User deleted successfully")
+              } catch {
+                toast.error("Failed to delete user")
+              }
+            }}
+          >
+            Delete
+          </Button>
+        </div>
+      </div>
+    ), { duration: Infinity })
   }
 
   if (loading) return <div>Loading...</div>
