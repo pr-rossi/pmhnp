@@ -4,7 +4,7 @@ import { Metadata } from 'next'
 import { cn } from '@/lib/utils'
 import { ThemeProvider } from '@/components/theme-provider'
 import { SiteHeader } from '@/components/site-header'
-import { TailwindIndicator } from '@/components/tailwind-indicator'
+import { ThemeToggle } from '@/components/theme-toggle'
 import { Providers } from "@/components/providers"
 import { SessionProvider } from "@/components/session-provider"
 
@@ -43,8 +43,8 @@ export default function RootLayout({
               <div className="relative flex min-h-screen flex-col">
                 <SiteHeader />
                 <div className="flex-1">{children}</div>
+                <ThemeToggle />
               </div>
-              <TailwindIndicator />
             </ThemeProvider>
           </Providers>
         </SessionProvider>

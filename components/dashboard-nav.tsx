@@ -13,6 +13,10 @@ interface DashboardNavProps {
 export function DashboardNav({ isAdmin }: DashboardNavProps) {
   const pathname = usePathname()
 
+  const handleSignOut = () => {
+    signOut({ callbackUrl: '/' })
+  }
+
   return (
     <nav className="grid items-start gap-2">
       <Link href="/dashboard" className="flex items-center space-x-2 mb-4">
@@ -55,7 +59,7 @@ export function DashboardNav({ isAdmin }: DashboardNavProps) {
       <Button 
         variant="ghost" 
         className="justify-start px-3"
-        onClick={() => signOut()}
+        onClick={handleSignOut}
       >
         Log Out
       </Button>
