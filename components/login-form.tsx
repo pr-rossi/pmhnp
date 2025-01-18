@@ -2,6 +2,7 @@
 
 import { signIn, useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -32,8 +33,14 @@ export function LoginForm() {
       })
 
       if (result?.error) {
-        if (result.error === "CredentialsSignin") {
-          toast.error("Invalid email or password")
+        // Check if user exists first
+        const checkUser = await fetch(`/api/users/check?email=${encodeURIComponent(email)}`)
+        const { exists } = await checkUser.json()
+
+        if (!exists) {
+          toast.error("No account found with this email")
+        } else if (result.error === "CredentialsSignin") {
+          toast.error("Invalid password")
         } else {
           toast.error("Something went wrong")
         }
@@ -55,24 +62,35 @@ export function LoginForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-4">
-      <Input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        disabled={isLoading}
-      />
-      <Input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        disabled={isLoading}
-      />
-      <Button type="submit" className="w-full" disabled={isLoading}>
-        {isLoading ? "Logging in..." : "Sign In"}
-      </Button>
-    </form>
+    <div className="space-y-6">
+      <form onSubmit={onSubmit} className="space-y-4">
+        <Input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          disabled={isLoading}
+        />
+        <Input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          disabled={isLoading}
+        />
+        <Button type="submit" className="w-full" disabled={isLoading}>
+          {isLoading ? "Logging in..." : "Sign In"}
+        </Button>
+      </form>
+      <div className="text-center text-sm">
+        Don't have an account?{" "}
+        <Link 
+          href="/register" 
+          className="font-semibold text-primary hover:underline"
+        >
+          Sign up
+        </Link>
+      </div>
+    </div>
   )
 } 
