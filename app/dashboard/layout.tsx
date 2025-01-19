@@ -22,7 +22,7 @@ export default async function DashboardLayout({
   return (
     <div className="flex min-h-screen">
       {/* Sidebar - flush left */}
-      <div className="hidden md:flex w-64 flex-col fixed inset-y-0 border-r bg-muted/30 backdrop-blur-xl">
+      <div className="hidden md:flex w-64 flex-col fixed inset-y-0 border-r bg-muted/30 backdrop-blur-xl pt-6">
         <DashboardNav isAdmin={user?.role === "ADMIN"} />
       </div>
 
@@ -33,7 +33,7 @@ export default async function DashboardLayout({
 
       {/* Main content - full width with offset */}
       <div className="flex-1 md:pl-64">
-        <main className="h-full">
+        <main className="h-full p-6">
           {children}
         </main>
       </div>
