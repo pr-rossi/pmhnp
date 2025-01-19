@@ -38,7 +38,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-      <section className="container space-y-6 py-8 md:py-12 lg:py-24">
+      <section className="container mx-auto px-4 flex-col columns-1 justify-center space-y-6 pb-8 pt-6 md:pb-12 md:pt-10 lg:py-32">
         <div className="mx-auto flex max-w-[58rem] flex-col items-center space-y-4 text-center">
           <h2 className="font-heading text-3xl leading-[1.1] sm:text-3xl md:text-6xl">
             Programs

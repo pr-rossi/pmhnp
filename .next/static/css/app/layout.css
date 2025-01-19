@@ -1181,6 +1181,9 @@ video {
 .list-none {
   list-style-type: none;
 }
+.columns-1 {
+  columns: 1;
+}
 .flex-row {
   flex-direction: row;
 }
