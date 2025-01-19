@@ -5,7 +5,7 @@ export default async function DashboardPage() {
   const session = await getServerSession()
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-full">
       <h1 className="text-3xl font-bold">Welcome back, {session?.user?.name}</h1>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
