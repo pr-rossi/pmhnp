@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { prisma } from "@/lib/prisma"
 import { DashboardNav } from "@/components/dashboard-nav"
 import { MobileNav } from "@/components/mobile-nav"
+import { DashboardMobileNav } from "@/components/dashboard/dashboard-mobile-nav"
 
 export default async function DashboardLayout({
   children,
@@ -28,7 +29,7 @@ export default async function DashboardLayout({
 
       {/* Mobile nav */}
       <div className="md:hidden">
-        <MobileNav isAdmin={user?.role === "ADMIN"} />
+        <DashboardMobileNav isAdmin={user?.role === "ADMIN"} />
       </div>
 
       {/* Main content - full width with offset */}

@@ -21,6 +21,11 @@ export function MobileNav({ isAuthenticated }: MobileNavProps) {
   const [open, setOpen] = React.useState(false)
   const pathname = usePathname()
 
+  // Hide mobile nav on dashboard routes
+  if (pathname.startsWith('/dashboard')) {
+    return null
+  }
+
   const routes = [
     {
       href: "/about",
