@@ -18,9 +18,9 @@ export function MainNav({ isAuthenticated }: MainNavProps) {
   }
 
   return (
-    <div className="flex w-full items-center justify-between">
+    <div className="hidden md:flex w-full items-center justify-between">
       <Link href="/" className="mr-6 flex items-center space-x-2">
-        <span className="hidden font-bold sm:inline-block">
+        <span className="font-bold">
           PMHNP Student Portal
         </span>
       </Link>
