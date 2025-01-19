@@ -42,37 +42,37 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50/50">
+    <div className="min-h-screen bg-gray-50/50 dark:bg-gray-950/50">
       <div className="container mx-auto px-4 py-8">
         <Link href="/blog">
-          <Button variant="ghost" className="mb-8 hover:bg-gray-100">
+          <Button variant="ghost" className="mb-8 hover:bg-gray-100 dark:hover:bg-gray-800">
             <ArrowLeft className="mr-2 h-4 w-4" /> Back to Blog
           </Button>
         </Link>
         
-        <article className="prose lg:prose-xl mx-auto max-w-[48rem] bg-white p-8 rounded-lg shadow-sm">
+        <article className="prose lg:prose-xl mx-auto max-w-[48rem] bg-white dark:bg-gray-900 p-8 rounded-lg shadow-sm">
           <div className="space-y-4 mb-8">
-            <h1 className="text-4xl font-bold tracking-tight !mb-4">{post.title}</h1>
+            <h1 className="text-4xl font-bold tracking-tight !mb-4 dark:text-white">{post.title}</h1>
             <div className="flex items-center gap-2 text-muted-foreground text-sm">
-              <span className="font-medium">{post.author}</span>
-              <span>•</span>
-              <time>{format(post.date, 'MMMM d, yyyy')}</time>
-              <span>•</span>
-              <span className="bg-gray-100 px-3 py-1 rounded-full text-xs">
+              <span className="font-medium dark:text-gray-300">{post.author}</span>
+              <span className="dark:text-gray-400">•</span>
+              <time className="dark:text-gray-300">{format(post.date, 'MMMM d, yyyy')}</time>
+              <span className="dark:text-gray-400">•</span>
+              <span className="bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded-full text-xs dark:text-gray-300">
                 {post.category}
               </span>
             </div>
           </div>
           
           <div 
-            className="prose prose-gray prose-headings:font-semibold prose-p:text-gray-600 prose-a:text-primary"
+            className="prose prose-gray dark:prose-invert prose-headings:font-semibold prose-p:text-gray-600 dark:prose-p:text-gray-300 prose-a:text-primary"
             dangerouslySetInnerHTML={{ __html: post.content }} 
           />
         </article>
 
-        <div className="mt-16 mx-auto max-w-[48rem] bg-white p-8 rounded-lg shadow-sm text-center">
-          <h2 className="text-2xl font-semibold mb-3">Enjoyed this article?</h2>
-          <p className="text-gray-600 mb-6">
+        <div className="mt-16 mx-auto max-w-[48rem] bg-white dark:bg-gray-900 p-8 rounded-lg shadow-sm text-center">
+          <h2 className="text-2xl font-semibold mb-3 dark:text-white">Enjoyed this article?</h2>
+          <p className="text-gray-600 dark:text-gray-300 mb-6">
             Subscribe to our newsletter for more insights on PMHNP practice and education.
           </p>
           <Link href="/newsletter-signup">
