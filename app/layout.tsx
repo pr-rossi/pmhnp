@@ -1,7 +1,6 @@
 import { Inter } from 'next/font/google'
 import { Metadata } from 'next'
 import { Toaster } from "sonner"
-import { headers } from 'next/headers'
 
 import { cn } from '@/lib/utils'
 import { ThemeProvider } from '@/components/theme-provider'

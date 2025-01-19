@@ -1,106 +1,94 @@
 "use client"
 
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { signOut, useSession } from 'next-auth/react'
-import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
-import { Menu } from 'lucide-react'
-import { useState } from 'react'
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import * as React from "react"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import { Menu } from "lucide-react"
+
+import { Button } from "@/components/ui/button"
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from "@/components/ui/sheet"
+import { cn } from "@/lib/utils"
 
 interface MobileNavProps {
-  isAdmin: boolean
+  isAuthenticated: boolean
 }
 
-export function MobileNav({ isAdmin }: MobileNavProps) {
+export function MobileNav({ isAuthenticated }: MobileNavProps) {
+  const [open, setOpen] = React.useState(false)
   const pathname = usePathname()
-  const { data: session } = useSession()
-  const [isSheetOpen, setIsSheetOpen] = useState(false)
+
+  const routes = [
+    {
+      href: "/about",
+      label: "About",
+    },
+    {
+      href: "/programs",
+      label: "Programs",
+    },
+    {
+      href: "/resources",
+      label: "Resources",
+    },
+    {
+      href: "/blog",
+      label: "Blog",
+    },
+  ]
 
   return (
-    <>
-      {/* Debug element */}
-      <div className="fixed top-0 left-0 bg-red-500 text-white text-xs p-1 z-50 md:hidden">
-        Mobile Nav Active
-      </div>
-
-      <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-        <SheetTrigger asChild>
-          <Button
-            variant="ghost"
-            className="md:hidden fixed top-4 left-4 p-2 z-40"
-            onClick={() => console.log('Mobile menu button clicked')} // Debug log
-          >
-            <Menu className="h-6 w-6" />
-          </Button>
-        </SheetTrigger>
-        <SheetContent side="left" className="w-[300px] sm:w-[400px] p-0">
-          {/* Debug element */}
-          <div className="bg-yellow-500 text-black p-1 text-xs">
-            Sheet Content Rendered
-          </div>
-
-          <div className="flex flex-col h-full">
-            <div className="flex items-center border-b p-4">
-              <Link href="/dashboard" className="flex items-center space-x-2">
-                <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
-                  <span className="font-bold text-lg text-primary-foreground">P</span>
-                </div>
-                <span className="font-bold text-lg">PMHNP Portal</span>
-              </Link>
-            </div>
-            
-            <nav className="flex-1 p-4 space-y-2">
-              <Link href="/dashboard">
-                <span className={cn(
-                  "block px-2 py-2 rounded-lg transition-colors",
-                  pathname === "/dashboard" ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-primary/5"
-                )}>
-                  Dashboard
-                </span>
-              </Link>
-              <Link href="/dashboard/profile">
-                <span className={cn(
-                  "block px-2 py-2 rounded-lg transition-colors",
-                  pathname === "/dashboard/profile" ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-primary/5"
-                )}>
-                  Profile
-                </span>
-              </Link>
-              <Link href="/dashboard/progress">
-                <span className={cn(
-                  "block px-2 py-2 rounded-lg transition-colors",
-                  pathname === "/dashboard/progress" ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-primary/5"
-                )}>
-                  Progress
-                </span>
-              </Link>
-              {isAdmin && (
-                <Link href="/dashboard/users">
-                  <span className={cn(
-                    "block px-2 py-2 rounded-lg transition-colors",
-                    pathname === "/dashboard/users" ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-primary/5"
-                  )}>
-                    Users
-                  </span>
-                </Link>
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetTrigger asChild>
+        <Button
+          variant="ghost"
+          className="mr-2 px-0 text-base hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 md:hidden"
+        >
+          <Menu className="h-6 w-6" />
+          <span className="sr-only">Toggle menu</span>
+        </Button>
+      </SheetTrigger>
+      <SheetContent side="left" className="pr-0">
+        <nav className="flex flex-col space-y-4">
+          {routes.map((route) => (
+            <Link
+              key={route.href}
+              href={route.href}
+              className={cn(
+                "text-sm font-medium transition-colors hover:text-primary",
+                pathname === route.href
+                  ? "text-foreground"
+                  : "text-foreground/60"
               )}
-            </nav>
-
-            <div className="border-t p-4">
-              <Button 
-                variant="ghost" 
-                onClick={() => signOut({ callbackUrl: '/' })}
-                className="w-full justify-start text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-              >
-                Log Out
+              onClick={() => setOpen(false)}
+            >
+              {route.label}
+            </Link>
+          ))}
+          {!isAuthenticated ? (
+            <>
+              <Link href="/login" onClick={() => setOpen(false)}>
+                <Button variant="ghost" className="w-full justify-start">
+                  Sign In
+                </Button>
+              </Link>
+              <Link href="/register" onClick={() => setOpen(false)}>
+                <Button className="w-full">Get Started</Button>
+              </Link>
+            </>
+          ) : (
+            <Link href="/dashboard" onClick={() => setOpen(false)}>
+              <Button variant="ghost" className="w-full justify-start">
+                Dashboard
               </Button>
-            </div>
-          </div>
-        </SheetContent>
-      </Sheet>
-    </>
+            </Link>
+          )}
+        </nav>
+      </SheetContent>
+    </Sheet>
   )
 }
 
