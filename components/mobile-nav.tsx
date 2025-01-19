@@ -41,7 +41,7 @@ export function MobileNav({ isAuthenticated }: MobileNavProps) {
   ]
 
   return (
-    <div className="w-full flex items-center justify-between md:hidden">
+    <div className="w-full flex items-center justify-between md:hidden p-4">
       <Link href="/" className="font-bold">
         PMHNP Student Portal
       </Link>
