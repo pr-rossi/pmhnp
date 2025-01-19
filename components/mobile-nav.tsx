@@ -41,57 +41,59 @@ export function MobileNav({ isAuthenticated }: MobileNavProps) {
   ]
 
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger asChild>
-        <Button
-          variant="ghost"
-          className="ml-auto px-0 text-base hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 md:hidden"
-        >
-          <Menu className="h-6 w-6" />
-          <span className="sr-only">Toggle menu</span>
-        </Button>
-      </SheetTrigger>
-      <SheetContent side="left" className="pr-0">
-        <nav className="flex flex-col space-y-4">
-          <Link href="/" className="mb-4 font-bold" onClick={() => setOpen(false)}>
-            PMHNP Student Portal
-          </Link>
-          {routes.map((route) => (
-            <Link
-              key={route.href}
-              href={route.href}
-              className={cn(
-                "text-sm font-medium transition-colors hover:text-primary",
-                pathname === route.href
-                  ? "text-foreground"
-                  : "text-foreground/60"
-              )}
-              onClick={() => setOpen(false)}
-            >
-              {route.label}
-            </Link>
-          ))}
-          {!isAuthenticated ? (
-            <>
-              <Link href="/login" onClick={() => setOpen(false)}>
+    <div className="flex items-center justify-between md:hidden">
+      <Link href="/" className="font-bold">
+        PMHNP Student Portal
+      </Link>
+      <Sheet open={open} onOpenChange={setOpen}>
+        <SheetTrigger asChild>
+          <Button
+            variant="ghost"
+            className="px-0 text-base hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
+          >
+            <Menu className="h-6 w-6" />
+            <span className="sr-only">Toggle menu</span>
+          </Button>
+        </SheetTrigger>
+        <SheetContent side="left" className="pr-0">
+          <nav className="flex flex-col space-y-4">
+            {routes.map((route) => (
+              <Link
+                key={route.href}
+                href={route.href}
+                className={cn(
+                  "text-sm font-medium transition-colors hover:text-primary",
+                  pathname === route.href
+                    ? "text-foreground"
+                    : "text-foreground/60"
+                )}
+                onClick={() => setOpen(false)}
+              >
+                {route.label}
+              </Link>
+            ))}
+            {!isAuthenticated ? (
+              <>
+                <Link href="/login" onClick={() => setOpen(false)}>
+                  <Button variant="ghost" className="w-full justify-start">
+                    Sign In
+                  </Button>
+                </Link>
+                <Link href="/register" onClick={() => setOpen(false)}>
+                  <Button className="w-full">Get Started</Button>
+                </Link>
+              </>
+            ) : (
+              <Link href="/dashboard" onClick={() => setOpen(false)}>
                 <Button variant="ghost" className="w-full justify-start">
-                  Sign In
+                  Dashboard
                 </Button>
               </Link>
-              <Link href="/register" onClick={() => setOpen(false)}>
-                <Button className="w-full">Get Started</Button>
-              </Link>
-            </>
-          ) : (
-            <Link href="/dashboard" onClick={() => setOpen(false)}>
-              <Button variant="ghost" className="w-full justify-start">
-                Dashboard
-              </Button>
-            </Link>
-          )}
-        </nav>
-      </SheetContent>
-    </Sheet>
+            )}
+          </nav>
+        </SheetContent>
+      </Sheet>
+    </div>
   )
 }
 
