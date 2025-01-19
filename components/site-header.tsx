@@ -1,11 +1,8 @@
 "use client"
 
-import Link from 'next/link'
 import { useSession } from "next-auth/react"
-import { usePathname } from "next/navigation"
 import { MainNav } from '@/components/main-nav'
 import { MobileNav } from "@/components/mobile-nav"
-import { useEffect, useState } from 'react'
 
 export function SiteHeader() {
   const { data: session } = useSession()
