@@ -4,6 +4,15 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import { PrismaClient } from "@prisma/client"
 import { compare } from "bcrypt"
 
+declare module "next-auth" {
+  interface User {
+    id: string
+    email: string
+    name: string
+    role: string
+  }
+}
+
 const prisma = new PrismaClient()
 
 const handler = NextAuth({
@@ -35,6 +44,7 @@ const handler = NextAuth({
           id: user.id,
           email: user.email,
           name: user.name,
+          role: user.role || 'user'
         }
       }
     })
