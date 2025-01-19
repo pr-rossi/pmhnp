@@ -1092,6 +1092,9 @@ video {
 .max-w-none {
   max-width: none;
 }
+.max-w-\[48rem\] {
+  max-width: 48rem;
+}
 .flex-1 {
   flex: 1 1 0%;
 }

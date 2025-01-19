@@ -105,7 +105,7 @@ export default function HomePage() {
         </div>
       </section>
       <section className="container mx-auto px-4 flex-col columns-1 justify-center space-y-6 pb-8 pt-6 md:pb-12 md:pt-10 lg:py-32">
-        <Card>
+        <Card className="mx-auto max-w-[48rem]">
           <CardContent className="p-6">
             <NewsletterSignup />
           </CardContent>
