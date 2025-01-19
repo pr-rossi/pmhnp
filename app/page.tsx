@@ -104,7 +104,7 @@ export default function HomePage() {
           </Card>
         </div>
       </section>
-      <section className="container py-8 md:py-12 lg:py-24">
+      <section className="container mx-auto px-4 flex-col columns-1 justify-center space-y-6 pb-8 pt-6 md:pb-12 md:pt-10 lg:py-32">
         <Card>
           <CardContent className="p-6">
             <NewsletterSignup />
