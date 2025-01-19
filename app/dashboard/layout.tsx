@@ -27,13 +27,9 @@ export default async function DashboardLayout({
         <DashboardNav isAdmin={user?.role === "ADMIN"} />
       </div>
 
-      {/* Mobile nav */}
-      <div className="md:hidden">
-        <DashboardMobileNav isAdmin={user?.role === "ADMIN"} />
-      </div>
-
-      {/* Main content - full width with offset */}
+      {/* Mobile nav and main content wrapper */}
       <div className="flex-1 md:pl-64">
+        <DashboardMobileNav isAdmin={user?.role === "ADMIN"} />
         <main className="h-full p-6">
           {children}
         </main>
