@@ -1,6 +1,7 @@
 import { Inter } from 'next/font/google'
 import { Metadata } from 'next'
 import { Toaster } from "sonner"
+import { headers } from 'next/headers'
 
 import { cn } from '@/lib/utils'
 import { ThemeProvider } from '@/components/theme-provider'
@@ -29,10 +30,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={cn(
-        'min-h-screen bg-background font-sans antialiased',
-        inter.className
-      )}>
+      <body className={cn('min-h-screen bg-background font-sans antialiased', inter.className)}>
         <SessionProvider>
           <Providers>
             <ThemeProvider
@@ -43,7 +41,7 @@ export default function RootLayout({
             >
               <div className="relative flex min-h-screen flex-col">
                 <SiteHeader />
-                <main className="container mx-auto flex-1 px-4">{children}</main>
+                <main className="flex-1">{children}</main>
                 <ThemeToggle />
                 <Toaster richColors closeButton position="top-center" />
               </div>
