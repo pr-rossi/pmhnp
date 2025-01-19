@@ -38,7 +38,7 @@ export function Sidebar({ className }: React.HTMLAttributes<HTMLElement>) {
   return (
     <nav
       className={cn(
-        "flex flex-col border-r bg-background",
+        "hidden md:flex flex-col border-r bg-background",
         className
       )}
     >
