@@ -21,11 +21,9 @@ export default async function DashboardLayout({
 
   return (
     <div className="flex min-h-screen">
-      {/* Sidebar */}
-      <div className="hidden md:flex w-64 flex-col fixed inset-y-0">
-        <div className="flex flex-col flex-grow border-r bg-muted/30 backdrop-blur-xl pt-5 pb-4 overflow-y-auto">
-          <DashboardNav isAdmin={user?.role === "ADMIN"} />
-        </div>
+      {/* Sidebar - flush left */}
+      <div className="hidden md:flex w-64 flex-col fixed inset-y-0 border-r bg-muted/30 backdrop-blur-xl">
+        <DashboardNav isAdmin={user?.role === "ADMIN"} />
       </div>
 
       {/* Mobile nav */}
@@ -33,9 +31,9 @@ export default async function DashboardLayout({
         <MobileNav isAdmin={user?.role === "ADMIN"} />
       </div>
 
-      {/* Main content */}
+      {/* Main content - full width with offset */}
       <div className="flex-1 md:pl-64">
-        <main className="container mx-auto px-4 py-8 max-w-6xl">
+        <main className="h-full">
           {children}
         </main>
       </div>
