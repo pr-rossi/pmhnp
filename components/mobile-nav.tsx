@@ -6,7 +6,11 @@ import { signOut, useSession } from 'next-auth/react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 
-export function MobileNav() {
+interface MobileNavProps {
+  isAdmin: boolean
+}
+
+export function MobileNav({ isAdmin }: MobileNavProps) {
   const pathname = usePathname()
   const { data: session } = useSession()
   const isOnDashboard = pathname?.startsWith('/dashboard')
