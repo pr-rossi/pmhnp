@@ -10,9 +10,8 @@ export function SiteHeader() {
   const pathname = usePathname()
   const isAuthenticated = !!session
   
-  // Hide header on auth pages and dashboard
-  const hiddenPaths = ['/login', '/register', '/dashboard']
-  if (hiddenPaths.includes(pathname)) {
+  // Hide header on auth pages and all dashboard pages
+  if (pathname.startsWith('/dashboard') || pathname === '/login' || pathname === '/register') {
     return null
   }
 
