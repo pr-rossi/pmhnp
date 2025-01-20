@@ -47,7 +47,7 @@ export default function HomePage() {
             Choose the program that best fits your learning style and schedule
           </p>
         </div>
-        <div className="mx-auto grid justify-center gap-4 sm:grid-cols-2 md:max-w-[64rem] md:grid-cols-3">
+        <div className="mx-auto grid justify-center gap-4 grid-cols-1 w-full sm:grid-cols-2 md:max-w-[64rem] md:grid-cols-3">
           <Card>
             <CardHeader>
               <CardTitle>J-I-T Program</CardTitle>
