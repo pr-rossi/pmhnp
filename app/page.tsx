@@ -15,23 +15,37 @@ import { NewsletterSignup } from '@/components/newsletter-signup'
 export default function HomePage() {
   return (
     <>
-      <section className="container mx-auto px-4 flex justify-center space-y-6 pb-8 pt-6 md:pb-12 md:pt-10 lg:py-32">
-        <div className="container flex max-w-[64rem] flex-col items-center gap-4 text-center">
-          <h1 className="font-heading text-3xl sm:text-5xl md:text-6xl lg:text-7xl">
-            Master Your PMHNP Journey with Confidence
-          </h1>
-          <p className="max-w-[42rem] leading-normal text-muted-foreground sm:text-xl sm:leading-8">
-            Join Dr. John Rossi's comprehensive PMHNP preparation programs. 
-            Tailored support for every stage of your psychiatric nursing career.
-          </p>
-          <div className="space-x-4">
+      <section className="container relative mx-auto px-4 flex justify-center space-y-6 pb-8 pt-6 md:pb-12 md:pt-10 lg:py-32">
+        {/* Background gradient effect */}
+        <div className="absolute inset-0 -z-10 mx-auto max-w-4xl overflow-hidden blur-[100px]">
+          <div className="relative h-[300px] w-[800px] -translate-y-1/2 bg-gradient-to-r from-purple-500/30 to-blue-500/30 dark:from-purple-500/20 dark:to-blue-500/20" />
+        </div>
+
+        <div className="container flex max-w-[64rem] flex-col items-center gap-6 text-center">
+          <div className="space-y-4">
+            <h1 className="font-heading animate-fade-up text-3xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl">
+              Master Your PMHNP Journey{" "}
+              <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                with Confidence
+              </span>
+            </h1>
+            <p className="mx-auto max-w-[42rem] leading-normal text-muted-foreground sm:text-xl sm:leading-8">
+              Join Dr. John Rossi's comprehensive PMHNP preparation programs. 
+              Tailored support for every stage of your psychiatric nursing career.
+            </p>
+          </div>
+          <div className="flex flex-col gap-4 sm:flex-row sm:space-x-4">
             <Link href="/programs">
-              <Button size="lg" className="px-8">
+              <Button size="lg" className="w-full px-8 font-medium transition-all hover:scale-105">
                 View Programs
               </Button>
             </Link>
             <Link href="/resources">
-              <Button variant="outline" size="lg" className="px-8">
+              <Button 
+                variant="outline" 
+                size="lg" 
+                className="w-full px-8 font-medium transition-all hover:scale-105 hover:bg-gradient-to-r hover:from-purple-600/10 hover:to-blue-600/10"
+              >
                 Free Resources
               </Button>
             </Link>
