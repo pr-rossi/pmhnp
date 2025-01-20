@@ -23,7 +23,7 @@ export function DashboardMobileNav({ isAdmin }: DashboardMobileNavProps) {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4">
-      <div className="container mx-auto flex h-14 items-center">
+      <div className="container mx-auto flex h-14 items-center md:hidden">
         <div className="w-full flex items-center justify-between md:hidden">
           <Link href="/dashboard" className="font-bold">
             Dashboard
