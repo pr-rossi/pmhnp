@@ -157,8 +157,16 @@ export default function HomePage() {
         </div>
       </section>
       <section className="container mx-auto px-4 flex-col columns-1 justify-center space-y-6 pb-8 pt-6 md:pb-12 md:pt-10 lg:py-32">
-        <Card className="mx-auto max-w-[48rem]">
-          <CardContent className="p-6">
+        <Card className="mx-auto max-w-[48rem] relative overflow-hidden">
+          <div className="absolute inset-0 -z-10 bg-gradient-to-br from-purple-100 to-blue-100 dark:from-purple-950/30 dark:to-blue-950/30" />
+          <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-purple-500 to-blue-500" />
+          <CardContent className="p-8 md:p-12">
+            <div className="flex flex-col items-center space-y-4 text-center mb-8">
+              <h2 className="font-heading text-2xl md:text-3xl font-bold">Stay Updated with PMHNP Insights</h2>
+              <p className="text-muted-foreground max-w-[85%]">
+                Join our community and receive expert tips, study guides, and the latest in psychiatric nursing.
+              </p>
+            </div>
             <NewsletterSignup />
           </CardContent>
         </Card>
