@@ -19,7 +19,7 @@ export function DashboardNav({ isAdmin }: DashboardNavProps) {
   }
 
   return (
-    <nav className="flex flex-col h-full min-h-[400px] justify-between px-3">
+    <nav className="flex flex-col h-full min-h-[400px] justify-between px-3 pb-3">
       <div className="space-y-2">
         <Link href="/dashboard" className="flex items-center space-x-2 mb-8 px-3">
           <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
