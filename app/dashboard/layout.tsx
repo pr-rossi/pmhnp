@@ -30,7 +30,7 @@ export default async function DashboardLayout({
       {/* Mobile nav and main content wrapper */}
       <div className="flex-1 md:pl-64">
         <DashboardMobileNav isAdmin={user?.role === "ADMIN"} />
-        <main className="h-full p-6">
+        <main className="h-full">
           {children}
         </main>
       </div>
